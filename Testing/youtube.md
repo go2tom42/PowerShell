@@ -13,7 +13,7 @@ $items = get-playlist-videos (get-channel-uploads 'UCzQUP1qoWDoEbmsQxvdjxgQ') # 
 
 The retrieval progress will be shown:
 
-![](C:\WORK\GitHub\PowerShell\Testing\1.png)
+![](1.png)
 
 Now we can list the titles of the videos:
 
@@ -22,7 +22,7 @@ $items | ForEach-Object { $_.snippet.title }
 ```
 
 
-![](C:\WORK\GitHub\PowerShell\Testing\2.png)
+![](2.png)
 
 Show titles which contain certain text:
 
@@ -30,4 +30,4 @@ Show titles which contain certain text:
 $items | ForEach-Object { $_.snippet.title } | Where-Object { $_ -match 'MMA' }
 ```
 
-![](C:\WORK\GitHub\PowerShell\Testing\3.png)
+![](3.png)
