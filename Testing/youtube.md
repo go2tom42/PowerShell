@@ -31,3 +31,8 @@ $items | ForEach-Object { $_.snippet.title } | Where-Object { $_ -match 'MMA' }
 ```
 
 ![](3.png)
+
+Stolen from
+
+https://stackoverflow.com/questions/54964766/getting-a-list-of-youtube-channel-titles
+
