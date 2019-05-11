@@ -1,8 +1,6 @@
-$outFile = ".\output.m4a"
+$outFile = ".\output.mka"
 $mergeText = ".\merge.txt"
 $metadataText = ".\metadata.txt"
-$ffmpeg = "c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffmpeg.exe"
-$ffprobe = "c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffprobe.exe"
 
 # cleanup working files
 If (Test-Path $outFile){
@@ -16,21 +14,21 @@ If (Test-Path $metadataText){
 }
 
 # Step 1 Convert Files 
-Write-Host "Convert Files ..."
-$convertFiles = Get-ChildItem ".\" -Filter "*.mp3"
-foreach ($convertFile in $convertFiles) {
-    $originalFile = $convertFile.FullName;
-    $convertedFile = [IO.Path]::ChangeExtension($originalFile, ".m4a");
-
-    if (-not (Test-Path $convertedFile)) {
-        Write-Host "Converting $convertFile ...";
-        &$ffmpeg -hide_banner -loglevel warning -i "$originalFile" -c:a aac -b:a 32k -ar 22050 -ac 1 -vn -y "$convertedFile"
-    }
-}
+#Write-Host "Convert Files ..."
+#$convertFiles = Get-ChildItem ".\" -Filter "*.mp3"
+#foreach ($convertFile in $convertFiles) {
+#    $originalFile = $convertFile.FullName;
+#    $convertedFile = [IO.Path]::ChangeExtension($originalFile, ".m4a");
+#
+#    if (-not (Test-Path $convertedFile)) {
+#        Write-Host "Converting $convertFile ...";
+#        &"c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffmpeg.exe" -hide_banner -loglevel warning -i "$originalFile" -c:a aac -b:a 32k -ar 22050 -ac 1 -vn -y "$convertedFile"
+#    }
+#}
 
 # Step 2 Analyze Files
 Write-Host "Analyze Files ..."
-$mergeFiles = Get-ChildItem ".\" -Filter "*.m4a"
+$mergeFiles = Get-ChildItem ".\" -Filter "*.mp3"
 $startTime = 0;
 $totalTime = 0;
 $chapter = 1;
@@ -39,7 +37,7 @@ foreach ($mergeFile in $mergeFiles) {
     $fullPath = $mergeFile.FullName;
 
     # get duration from file and convert to timespan
-    $duration = &$ffprobe -i "$fullPath" -show_entries format=duration -v quiet -of csv="p=0"    
+    $duration = &"c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffprobe.exe" -i "$fullPath" -show_entries format=duration -v quiet -of csv="p=0"    
     $durationSpan = New-TimeSpan -Seconds $duration
 
     $startTime = $totalTime
@@ -50,7 +48,7 @@ foreach ($mergeFile in $mergeFiles) {
     # extract metadata
     If (-not(Test-Path $metadataText)){
         Write-Host "Extract Metadata ..."
-        &$ffmpeg -hide_banner -loglevel error -i "$fullPath" -f ffmetadata "$metadataText"
+        &"c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffmpeg.exe" -hide_banner -loglevel error -i "$fullPath" -f ffmetadata "$metadataText"
     }
 
     Write-Host $mergeFile Duration: $duration Span: $durationSpan.ToString("hh\:mm\:ss\.fff") Start: $startSpan.ToString("hh\:mm\:ss\.fff");
@@ -69,4 +67,4 @@ foreach ($mergeFile in $mergeFiles) {
 
 # Step 3 Merge Files
 Write-Host "Merging Files ..."
-&$ffmpeg -hide_banner -loglevel warning -f concat -safe 0 -i "$mergeText" -i "$metadataText" -map_metadata 1 -c copy "$outFile"
+&"c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffmpeg.exe" -hide_banner -loglevel warning -f concat -safe 0 -i "$mergeText" -i "$metadataText" -map_metadata 1 -c copy -attach .\image.jpg -metadata:s:t mimetype=image/jpeg "$outFile"
