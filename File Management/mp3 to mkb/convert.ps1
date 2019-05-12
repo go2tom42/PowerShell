@@ -2,7 +2,7 @@ $outFile = ".\output.mka"
 $mergeText = ".\merge.txt"
 $metadataText = ".\metadata.txt"
 $ffmpeg = "c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffmpeg.exe"
-$ffprobe = "c:\ProgramData\chocolatey\lib\ffmpeg\tools\ffmpeg\bin\ffprobe.exe"
+$mediainfocli = "C:\WORK\audio stuff\shit\MediaInfo.exe"
 
 # cleanup working files
 If (Test-Path $outFile){
@@ -27,12 +27,9 @@ foreach ($mergeFile in $mergeFiles) {
     $fullPath = $mergeFile.FullName;
 
     # get duration from file and convert to timespan
-    $duration = &$ffprobe -i "$fullPath" -show_entries format=duration -v quiet -of csv="p=0"    
-    $durationSpan = New-TimeSpan -Seconds $duration
-
-    $startTime = $totalTime
-    $startSpan = New-TimeSpan -Seconds $totalTime
+    $duration = ((&$mediainfocli --Inform="General;%Duration%" "$fullPath")/1000)
     
+    $startTime = $totalTime
     $totalTime += $duration
 
     # extract metadata
@@ -41,7 +38,7 @@ foreach ($mergeFile in $mergeFiles) {
         &$ffmpeg -hide_banner -loglevel error -i "$fullPath" -f ffmetadata "$metadataText"
     }
 
-    Write-Host $mergeFile Duration: $duration Span: $durationSpan.ToString("hh\:mm\:ss\.fff") Start: $startSpan.ToString("hh\:mm\:ss\.fff");
+
 
     # create merge and chapter files
     Add-Content $mergeText "file '$mergeFile'"
