@@ -5,14 +5,17 @@ Param(
     [parameter(Mandatory=$false)]
     $FFN = '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
 )
-
+#-----
+$File = 'Z:\Videos\Movies\Live Action\Armageddon [1998]\Armageddon 1998 Bluray-720p.mkv'
+$FFN = '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
+#----=
 if ($ffn.contains('-ext') -eq $true) {
     $audioext = '.' + $ffn.Substring(($ffn.IndexOf('-ext')+5), 3)
 } else {
     $audioext = '.m4a'
 }
 
-$filepath = Get-Childitem $File -ErrorAction Stop
+$filepath = Get-Childitem -LiteralPath $File -ErrorAction Stop
 
 $arguments = '-i "' + $filepath.FullName + '" -hide_banner -show_streams -show_format -print_format json'
 Echo "Getting audio info"
@@ -53,7 +56,7 @@ Echo "Demuxing audio file"
 Start-Process -FilePath "ffmpeg" -ArgumentList $2ndarguments -wait -NoNewWindow -RedirectStandardError nul 
 
 $global:audiofile = $filepath.FullName.TrimEnd($filepath.extension) + '.' + $ffprobeJson.streams[$codec_type].codec_name
-$global:audiofile = Get-ChildItem $global:audiofile
+$global:audiofile = Get-ChildItem -LiteralPath $global:audiofile
 $global:mainfile = $filepath
 
 echo 'extraction done'
@@ -68,7 +71,7 @@ Remove-Item -Path $audiofile.FullName
 echo 'normalizing done'
 
 $global:audiofile = $audiofile.FullName.TrimEnd($audiofile.extension) + $audioext
-$global:audiofile = Get-ChildItem $global:audiofile
+$global:audiofile = Get-ChildItem -LiteralPath $global:audiofile
  
 $newfile = $mainfile.FullName.TrimEnd($mainfile.Extension) + '.normalized' + $mainfile.Extension
 
