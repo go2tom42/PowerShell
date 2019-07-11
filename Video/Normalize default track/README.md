@@ -28,9 +28,9 @@ Please read this section for a high level introduction.
 
 **What does the program do?**
 
-The script uses [FFprobe](http://ffmpeg.org) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [FFmpeg](http://ffmpeg.org) to demux the one audio track, once that is finished it uses **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)** to normalize the track.  After **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)** is done the script takes the normalized [track](https://github.com/slhck/ffmpeg-normalize) and inserts in back into the video file.  It is set as the "Default" track, all other audio tracks & subtitles are safe and still in the video file. 
+The script uses [FFprobe](http://ffmpeg.org) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [FFmpeg](http://ffmpeg.org) to demux the one audio track, once that is finished it uses **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)** to normalize the track.  After **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)** is done the script takes the normalized track and inserts in back into the video file.  It is set as the "Default" track, all other audio tracks & subtitles are safe and still in the video file. 
 
-The script cleans up and delete the demuxed & normalized audio files when it finished
+The script cleans up and deletes the demuxed & normalized audio files when it finished
 
 A new file is created when all is done. Say you started with yourfile.mkv, the finished file will be named yourfile.normalized.mkv.  The original file IS NOT deleted, I'm not that sure of the powershell skills.  Verify the file is correct and delete the original file yourself.
 
@@ -42,11 +42,11 @@ This script accepts two arguments, the file (required) and the commands you woul
 
 -FFN '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
 
-If you only don't supply a -FFN the one listed above is what you will get
+If you don't supply a -FFN the one listed above is what you will get
 
 ## Example
 
-Normalize two WAV files and write them to the specified output files with uncompressed PCM WAV as audio codec:
+Normalize default track use AAC at 192k, it also downmixes audio to two channels:
 
     .\Normalize.default.audio.track.ps1 -File "c:\ Folder with spaces\video.mkv" -FFN '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
 
