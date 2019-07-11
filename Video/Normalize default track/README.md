@@ -28,11 +28,11 @@ Please read this section for a high level introduction.
 
 **What does the program do?**
 
-The script uses [FFprobe](http://ffmpeg.org) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [FFmpeg](http://ffmpeg.org) to demux the one audio track, once that is finished it uses **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)** to normalize the track.  After **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)** is done the script takes the normalized track and inserts in back into the video file.  It is set as the "Default" track, all other audio tracks & subtitles are safe and still in the video file. 
+The script uses [FFprobe](http://ffmpeg.org) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [FFmpeg](http://ffmpeg.org) to demux the one audio track
 
 The script cleans up and deletes the demuxed & normalized audio files when it finished
 
-A new file is created when all is done. Say you started with yourfile.mkv, the finished file will be named yourfile.normalized.mkv.  The original file IS NOT deleted, I'm not that sure of the powershell skills.  Verify the file is correct and delete the original file yourself.
+A new file is created when all is done. Say you started with yourfile.mkv, the finished file will be named yourfile.normalized.mkv.  The original file IS NOT deleted, I'm not that sure of the powershell skills.  Verify the file is correct and delete the 
 
 **How do I specify the input?**
 
