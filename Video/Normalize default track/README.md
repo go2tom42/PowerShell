@@ -52,4 +52,4 @@ Normalize default track use AAC at 192k, it also downmixes audio to two channels
 
 -File for locations with spaces use " " or ' ' around it
 
--FFN use ' ' around the command if it contains and " ", if not use either
+-FFN use ' ' around the command if it contains any " ", if not use either
