@@ -66,7 +66,7 @@ $3rdarguments = '"' + $audiofile.FullName + '" -o "' + $audiofile.FullName.TrimE
 Echo "Normalizing audio file"
 Start-Process -FilePath "ffmpeg-normalize" -ArgumentList $3rdarguments -wait -NoNewWindow 
 
-Remove-Item -Path $audiofile.FullName
+Remove-Item -LiteralPath $audiofile.FullName
 
 echo 'normalizing done'
 
@@ -75,10 +75,10 @@ $global:audiofile = Get-ChildItem -LiteralPath $global:audiofile
  
 $newfile = $mainfile.FullName.TrimEnd($mainfile.Extension) + '.normalized' + $mainfile.Extension
 
-$4tharguments = '-i "' + $mainfile.FullName + '" -i "' + $audiofile.FullName + '" -map 0:v:0 -map 1:a:0 -map 0:a -map 0:s -c copy -disposition:a:0 default -disposition:a:1 none "' + $newfile + '"'
+$4tharguments = '-i "' + $mainfile.FullName + '" -i "' + $audiofile.FullName + '" -map 0:v:0 -map 1:a:0 -map 0:a -map 0:s? -c copy -disposition:a:0 default -disposition:a:1 none "' + $newfile + '"'
 Echo "Remuxing video file with new audio added as default track"
 Start-Process -FilePath "ffmpeg" -ArgumentList $4tharguments -wait -NoNewWindow -RedirectStandardError nul
 
-Remove-Item -Path $audiofile
+Remove-Item -LiteralPath $audiofile.FullName
 
 echo 'remux done'
