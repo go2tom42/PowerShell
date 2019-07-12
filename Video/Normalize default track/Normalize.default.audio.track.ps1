@@ -5,10 +5,7 @@ Param(
     [parameter(Mandatory=$false)]
     $FFN = '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
 )
-#-----
-$File = 'Z:\Videos\Movies\Live Action\Armageddon [1998]\Armageddon 1998 Bluray-720p.mkv'
-$FFN = '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
-#----=
+
 if ($ffn.contains('-ext') -eq $true) {
     $audioext = '.' + $ffn.Substring(($ffn.IndexOf('-ext')+5), 3)
 } else {
