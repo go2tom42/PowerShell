@@ -48,17 +48,17 @@ if ($audiofound -ne 1) {
     }
 }
 
-$2ndarguments = '-i "' + $filepath.FullName + '" -map 0:a:' + $extract_stream + ' -c copy "' + $filepath.FullName.TrimEnd($filepath.extension) + '.' + $ffprobeJson.streams[$codec_type].codec_name + '"'
+$2ndarguments = '-i "' + $filepath.FullName + '" -map 0:a:' + $extract_stream + ' -c copy "' + $filepath.FullName.TrimEnd($filepath.extension) + '.AUDIO.mkv"'
 Echo "Demuxing audio file"
 Start-Process -FilePath "ffmpeg" -ArgumentList $2ndarguments -wait -NoNewWindow -RedirectStandardError nul 
 
-$global:audiofile = $filepath.FullName.TrimEnd($filepath.extension) + '.' + $ffprobeJson.streams[$codec_type].codec_name
+$global:audiofile = $filepath.FullName.TrimEnd($filepath.extension) + '.AUDIO.mkv'
 $global:audiofile = Get-ChildItem -LiteralPath $global:audiofile
 $global:mainfile = $filepath
 
 echo 'extraction done'
 
-$3rdarguments = '"' + $audiofile.FullName + '" -o "' + $audiofile.FullName.TrimEnd($audiofile.extension) + $audioext + '" ' + $FFN
+$3rdarguments = '"' + $audiofile.FullName + '" -o "' + $audiofile.FullName.TrimEnd('.AUDIO' + $audiofile.extension) + $audioext + '" ' + $FFN
 
 Echo "Normalizing audio file"
 Start-Process -FilePath "ffmpeg-normalize" -ArgumentList $3rdarguments -wait -NoNewWindow 
@@ -67,7 +67,7 @@ Remove-Item -LiteralPath $audiofile.FullName
 
 echo 'normalizing done'
 
-$global:audiofile = $audiofile.FullName.TrimEnd($audiofile.extension) + $audioext
+$global:audiofile = $audiofile.FullName.TrimEnd('.AUDIO' + $audiofile.extension) + $audioext
 $global:audiofile = Get-ChildItem -LiteralPath $global:audiofile
  
 $newfile = $mainfile.FullName.TrimEnd($mainfile.Extension) + '.normalized' + $mainfile.Extension
