@@ -15,8 +15,6 @@ if ($ffn.contains('-ext') -eq $true) {
 
 function Get-DefaultAudio($file){
 
-#    Param ($file)
-#    $file = "E:\WORK\Audio-AGAIN\Avengers.Endgame.2019.V2.1080p.HDRip.X264.AC3-EVO.NORMALIZED (1).mkv"
     $file = Get-Childitem -LiteralPath $file -ErrorAction Stop
 
     $video = &mkvmerge -J $file | ConvertFrom-Json
