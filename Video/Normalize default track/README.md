@@ -14,6 +14,7 @@ Contents:
 ## Requirements
 
 -   Python 2.7 or 3
+-   MKVmerge <https://www.matroska.org/>
 -   ffmpeg v3.1 or above from <http://ffmpeg.org/> installed in your \$PATH
 -   ffmpeg-normalize run on python, can be compiled into EXE if needed
     https://github.com/slhck/ffmpeg-normalize
@@ -28,11 +29,9 @@ Please read this section for a high level introduction.
 
 **What does the program do?**
 
-The script uses [FFprobe](http://ffmpeg.org) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [FFmpeg](http://ffmpeg.org) to demux the one audio track
+The script uses [MKVmerge](https://www.matroska.org) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [MKVmerge](https://www.matroska.org) to demux the one audio track
 
-The script cleans up and deletes the demuxed & normalized audio files when it finished
-
-A new file is created when all is done. Say you started with yourfile.mkv, the finished file will be named yourfile.normalized.mkv.  The original file IS NOT deleted, I'm not that sure of the powershell skills.  Verify the file is correct and delete the 
+A new file is created when all is done. Say you started with yourfile.mkv, the finished file will be named yourfile.NORMALIZED.mkv.  The original file IS NOT deleted incase something went wrong, I'm not that sure of my powershell skills.  Verify the file is correct and delete the original
 
 **How do I specify the input?**
 
@@ -53,3 +52,7 @@ Normalize default track use AAC at 192k, it also downmixes audio to two channels
 -File for locations with spaces use " " or ' ' around it
 
 -FFN use ' ' around the command if it contains any " ", if not use either
+
+## TO DO
+
+Remove requirments for python & ffmpeg-normalize
