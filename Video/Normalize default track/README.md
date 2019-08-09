@@ -8,6 +8,7 @@ Contents:
 - [Usage](#usage)
 - [Description](#description)
 - [Example](#example)
+- [TO-DO](#TO-DO)
 
 -------------
 
@@ -53,6 +54,6 @@ Normalize default track use AAC at 192k, it also downmixes audio to two channels
 
 -FFN use ' ' around the command if it contains any " ", if not use either
 
-## TO DO
+## TO-DO
 
 Remove requirments for python & ffmpeg-normalize
