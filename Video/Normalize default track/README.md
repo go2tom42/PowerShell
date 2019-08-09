@@ -38,9 +38,9 @@ A new file is created when all is done. Say you started with yourfile.mkv, the f
 
 This script accepts two arguments, the file (required) and the commands you would use for **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)**
 
--File c:\directory\file.mkv
+    -File c:\directory\file.mkv
 
--FFN '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
+    -FFN '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
 
 If you don't supply a -FFN the one listed above is what you will get
 
