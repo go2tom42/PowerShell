@@ -1,4 +1,5 @@
 $CurrentDir = Get-Location
+$CurrentDir = $CurrentDir.Path # |gm
 $mkvlist = Get-ChildItem -Path $CurrentDir -Filter *.mkv -ErrorAction SilentlyContinue -Force
 
 
