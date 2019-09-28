@@ -17,7 +17,7 @@ function _DeMuxAll($file) {
     $videoMKVinfo = $videoMKVinfo.tracks
 
     #load Xml that gets ext for a codec
-    $codecIDs = [xml](Get-Content D:\Video\Episodes\CodecID.xml) | ForEach-Object { $_.codecs.codec }
+    $codecIDs = [xml](Get-Content ((Get-Location).path + '\CodecID.xml')) | ForEach-Object { $_.codecs.codec }
 
     $NumberOfTracks = $videoMKVinfo.count
 
