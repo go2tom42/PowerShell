@@ -1,5 +1,7 @@
 # CodecID.xml is from https://github.com/line0/MkvTools
 
+#This will demux MKV files, it extracts all: video, audio, subtitle tracks, and chapters (in OGM format).  All of this is does to separate folders for each type of track
+
 
 #$file = 'C:\Video\test.mkv'
 #$file = 'C:\Video\test-pos.mkv'
@@ -19,7 +21,7 @@ function _DeMuxAll($file) {
     #$videoMKVinfo = (&mkvmerge --ui-language en --identify  --identification-format json "$file" | ConvertFrom-Json).tracks
     $videoMKVinfo = $videoMKVinfo.tracks
 
-    #load Xml that gets ext for a codec
+    #load Xml that gets extension for a codecID
     $codecIDs = [xml](Get-Content ((Get-Location).path + '\CodecID.xml')) | ForEach-Object { $_.codecs.codec }
 
     $NumberOfTracks = $videoMKVinfo.count
