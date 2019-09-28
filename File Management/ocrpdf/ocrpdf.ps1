@@ -7,6 +7,6 @@ If($FileName.PSDrive.name.ToLower() -eq "x") {Start-Process -FilePath "wsl" -Arg
 If($FileName.PSDrive.name.ToLower() -eq "y") {Start-Process -FilePath "wsl" -ArgumentList "sudo mount -t drvfs Y: /mnt/y" -wait -NoNewWindow}
 If($FileName.PSDrive.name.ToLower() -eq "z") {Start-Process -FilePath "wsl" -ArgumentList "sudo mount -t drvfs Z: /mnt/z" -wait -NoNewWindow}
 
-$arguments = 'ocrmypdf --deskew ' + '"' + $wslpath + '" "' + $OCRwslpath + '"'
+$arguments = 'ocrmypdf --deskew --clean ' + '"' + $wslpath + '" "' + $OCRwslpath + '"'
 
 Start-Process -FilePath "wsl" -ArgumentList $arguments -wait -NoNewWindow
