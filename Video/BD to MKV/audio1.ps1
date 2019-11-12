@@ -29,7 +29,7 @@ $Destination = (Get-IniContent settings.ini).settings.Destination
 if (Test-Path ($Destination + 'EPs\Normalize\0')) {
     $AudioList = Get-ChildItem -Path ($Destination + 'EPs\Normalize\0') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     foreach ($file in $AudioList) {
-        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','Normalize') + '"')
+        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','audio') + '"')
         Start-Process -FilePath ffmpeg-normalize -ArgumentList $ArgumentList -wait -NoNewWindow 
     }   
 }
@@ -37,7 +37,7 @@ if (Test-Path ($Destination + 'EPs\Normalize\0')) {
 if (Test-Path ($Destination + 'HD\Normalize\0')) {
     $AudioList = Get-ChildItem -Path ($Destination + 'HD\Normalize\0') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     foreach ($file in $AudioList) {
-        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','Normalize') + '"')
+        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','audio') + '"')
         Start-Process -FilePath ffmpeg-normalize -ArgumentList $ArgumentList -wait -NoNewWindow 
     }   
 }
@@ -45,7 +45,7 @@ if (Test-Path ($Destination + 'HD\Normalize\0')) {
 if (Test-Path ($Destination + 'SD\Normalize\0')) {
     $AudioList = Get-ChildItem -Path ($Destination + 'SD\Normalize\0') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     foreach ($file in $AudioList) {
-        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','Normalize') + '"')
+        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','audio') + '"')
         Start-Process -FilePath ffmpeg-normalize -ArgumentList $ArgumentList -wait -NoNewWindow 
     }   
 }
@@ -53,7 +53,7 @@ if (Test-Path ($Destination + 'SD\Normalize\0')) {
 if (Test-Path ($Destination + '4x3\Normalize\0')) {
     $AudioList = Get-ChildItem -Path ($Destination + '4x3\Normalize\0') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     foreach ($file in $AudioList) {
-        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','Normalize') + '"')
+        $ArgumentList = ('"' + $file.FullName + '" -c:a ac3 -b:a 384k -ar 48000 --progress --verbose -o "' + $file.FullName.replace('Normalize\0','audio') + '"')
         Start-Process -FilePath ffmpeg-normalize -ArgumentList $ArgumentList -wait -NoNewWindow 
     }   
 }

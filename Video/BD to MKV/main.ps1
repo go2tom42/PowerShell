@@ -95,7 +95,8 @@ function _DeMuxAll($file,$type) {
 
 if (Test-Path ($DemuxOutFolder + 'EPs')) {
     $type = "EPs\"
-    New-Item -ItemType "directory" -Path ($Destination + 'EPs\video') -ErrorAction SilentlyContinue | Out-Null    
+    New-Item -ItemType "directory" -Path ($Destination + 'EPs\video') -ErrorAction SilentlyContinue | Out-Null   
+    New-Item -ItemType "directory" -Path ($Destination + 'EPs\Normalize') -ErrorAction SilentlyContinue | Out-Null   
     New-Item -ItemType "directory" -Path ($Destination + 'EPs\audio') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + 'EPs\subtitles') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + 'EPs\chapters') -ErrorAction SilentlyContinue | Out-Null
@@ -107,6 +108,7 @@ if (Test-Path ($DemuxOutFolder + 'EPs')) {
 if (Test-Path ($DemuxOutFolder + 'HD')) {
     $type = "HD\"
     New-Item -ItemType "directory" -Path ($Destination + 'HD\video') -ErrorAction SilentlyContinue | Out-Null    
+    New-Item -ItemType "directory" -Path ($Destination + 'HD\Normalize') -ErrorAction SilentlyContinue | Out-Null 
     New-Item -ItemType "directory" -Path ($Destination + 'HD\audio') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + 'HD\subtitles') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + 'HD\chapters') -ErrorAction SilentlyContinue | Out-Null
@@ -117,7 +119,8 @@ if (Test-Path ($DemuxOutFolder + 'HD')) {
 
 if (Test-Path ($DemuxOutFolder + 'SD')) {
     $type = "SD\"
-    New-Item -ItemType "directory" -Path ($Destination + 'SD\video') -ErrorAction SilentlyContinue | Out-Null    
+    New-Item -ItemType "directory" -Path ($Destination + 'SD\video') -ErrorAction SilentlyContinue | Out-Null 
+    New-Item -ItemType "directory" -Path ($Destination + 'SD\Normalize') -ErrorAction SilentlyContinue | Out-Null    
     New-Item -ItemType "directory" -Path ($Destination + 'SD\audio') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + 'SD\subtitles') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + 'SD\chapters') -ErrorAction SilentlyContinue | Out-Null
@@ -129,6 +132,7 @@ if (Test-Path ($DemuxOutFolder + 'SD')) {
 if (Test-Path ($DemuxOutFolder + '4x3')) {
     $type = "4x3\"
     New-Item -ItemType "directory" -Path ($Destination + '4x3\video') -ErrorAction SilentlyContinue | Out-Null    
+    New-Item -ItemType "directory" -Path ($Destination + '4X3\Normalize') -ErrorAction SilentlyContinue | Out-Null 
     New-Item -ItemType "directory" -Path ($Destination + '4x3\audio') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + '4x3\subtitles') -ErrorAction SilentlyContinue | Out-Null
     New-Item -ItemType "directory" -Path ($Destination + '4x3\chapters') -ErrorAction SilentlyContinue | Out-Null
@@ -144,14 +148,12 @@ Pause
 
 #wrap audio to MKV
 
-if (Test-Path ($Destination + "EPs\Normalize")) { $AudioEPsList = @(Get-ChildItem ($Destination + "EPs\Normalize")  -Filter ($ext4Audio2Norm) -ErrorAction SilentlyContinue -Force) | Sort-Object }
-if (Test-Path ($Destination + "HD\Normalize")) { $AudioHDList = @(Get-ChildItem ($Destination + "HD\Normalize")  -Filter ($ext4Audio2Norm) -ErrorAction SilentlyContinue -Force) | Sort-Object }
-if (Test-Path ($Destination + "SD\Normalize")) { $AudioSDList = @(Get-ChildItem ($Destination + "SD\Normalize")  -Filter ($ext4Audio2Norm) -ErrorAction SilentlyContinue -Force) | Sort-Object }
-if (Test-Path ($Destination + "4x3\Normalize")) { $Audio4x3List = @(Get-ChildItem ($Destination + "4x3\Normalize")  -Filter ($ext4Audio2Norm) -ErrorAction SilentlyContinue -Force) | Sort-Object }
+if (Test-Path ($Destination + "EPs\Normalize")) { $AudioEPsList = @(Get-ChildItem ($Destination + "EPs\Normalize")  -Filter ('*.*') -ErrorAction SilentlyContinue -Force) | Sort-Object }
+if (Test-Path ($Destination + "HD\Normalize")) { $AudioHDList = @(Get-ChildItem ($Destination + "HD\Normalize")  -Filter ('*.*') -ErrorAction SilentlyContinue -Force) | Sort-Object }
+if (Test-Path ($Destination + "SD\Normalize")) { $AudioSDList = @(Get-ChildItem ($Destination + "SD\Normalize")  -Filter ('*.*') -ErrorAction SilentlyContinue -Force) | Sort-Object }
+if (Test-Path ($Destination + "4x3\Normalize")) { $Audio4x3List = @(Get-ChildItem ($Destination + "4x3\Normalize")  -Filter ('*.*') -ErrorAction SilentlyContinue -Force) | Sort-Object }
 
-
-
-function WrapAudio($files) {
+function WrapAudio($files, $type) {
     $Destination = (Get-IniContent settings.ini).settings.Destination
     foreach ($file in $files) {
         $json = ''
@@ -164,45 +166,26 @@ function WrapAudio($files) {
         Start-Process -FilePath "mkvmerge" -ArgumentList ('"' + "@$($Destination)\A2MKV.json" + '"') -wait -NoNewWindow #-RedirectStandardError nul
         Remove-Item -LiteralPath "$($Destination)\A2MKV.json"
         Remove-Item -LiteralPath $file.FullName
+    }
+    $groupCount = 3
+    $path = ($Destination + $type + "\Normalize")
+    $files = Get-ChildItem $path -File -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
+    For ($fileIndex = 0; $fileIndex -lt $files.Count; $fileIndex++) {
+        $targetIndex = $fileIndex % $groupCount
+        $targetPath = Join-Path $path $targetIndex
+        If (!(Test-Path $targetPath -PathType Container)) { [void](new-item -Path $path -name $targetIndex -Type Directory) }
+        $files[$fileIndex] | Move-Item -Destination $targetPath -Force
     }    
 }
-
-WrapAudio $AudioEPsList
-WrapAudio $AudioHDList
-WrapAudio $AudioSDList
-WrapAudio $Audio4x3List
-
-
-
-
-# divides audio into 3 groups
-
-$groupCount = 3
-#$path = ($Destination + "EPs\Normalize")
-$path = ($Destination + "HD\Normalize")
-$files = Get-ChildItem $path -File -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
-
-For($fileIndex = 0; $fileIndex -lt $files.Count; $fileIndex++){
-    $targetIndex = $fileIndex % $groupCount
-    $targetPath = Join-Path $path $targetIndex
-    If(!(Test-Path $targetPath -PathType Container)){[void](new-item -Path $path -name $targetIndex -Type Directory)}
-    $files[$fileIndex] | Move-Item -Destination $targetPath -Force
-}
+if (Test-Path ($Destination + "EPs\Normalize")) { WrapAudio $AudioEPsList 'EPs' }
+if (Test-Path ($Destination + "HD\Normalize")) { WrapAudio $AudioHDList 'HD' }
+if (Test-Path ($Destination + "SD\Normalize")) { WrapAudio $AudioSDList 'SD' }
+if (Test-Path ($Destination + "4x3\Normalize")) { WrapAudio $Audio4x3List '4x3' }
 
 #starts main workload 
+
 $procs = $(Start-Process -PassThru "pwsh" -ArgumentList '-File audio1.ps1'; Start-Process -PassThru "pwsh" -ArgumentList '-File audio2.ps1'; Start-Process -PassThru "pwsh" -ArgumentList '-File audio3.ps1';Start-Process -PassThru "pwsh" -ArgumentList '-File subtitles.ps1'; Start-Process -PassThru "pwsh" -ArgumentList '-File video.ps1')
 $procs | Wait-Process
-
-#move normmarlized files
-
-$nomalizedList = Get-ChildItem -Path ($Destination + 'EPs\normalize') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
-
-foreach ($normalize in $nomalizedList) {
-    $dest = $normalize.FullName.Replace('Normalize','audio')
-    Move-Item -Path $normalize.FullName -Destination $dest -Force
-}
-
-Remove-Item -Path ($Destination + 'EPs\Normalize') -Recurse -Force
 
 #remux
 
@@ -313,16 +296,3 @@ if (Test-Path ($Destination + '4x3')) {
 
 
 #clean up
-
-
-
-
-
-Remove-Item ($Destination + 'EPs') -Recurse -Force 
-New-Item -Path ($Destination + 'EPs') -ItemType "directory" -ErrorAction SilentlyContinue | Out-Null
-$MuxVideoList = Get-ChildItem -Path ($Destination + 'EPs-done') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
-foreach ($MuxVideo in $MuxVideoList) {
-    $dest = $MuxVideo.FullName.Replace('EPs-done','EPs')
-    Move-Item -Path $MuxVideo.FullName -Destination $dest -Force
-}
-Remove-Item ($Destination + 'EPs-done') -Recurse -Force 
