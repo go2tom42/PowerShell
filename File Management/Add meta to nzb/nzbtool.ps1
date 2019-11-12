@@ -25,10 +25,14 @@ Param(
   [String]$tag = $null
 )
 
+
  if ($help -eq $true) {
   Write-Host "nzbtool input [input.nzb] [-h] [-c Category]  [-n Name] [-p Password] [-t Tag]"
   exit
  }
+
+if (!$filename) {Write-Host "nzbtool input [input.nzb] [-h] [-c Category]  [-n Name] [-p Password] [-t Tag]"}
+
 
 if ($filename) {
   [string]$newxml = ''
