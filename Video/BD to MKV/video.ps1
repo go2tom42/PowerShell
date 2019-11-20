@@ -1,9 +1,9 @@
 #$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\1080p_x265.json') + '" -Z "1080p x265" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
-#$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\HD 16x9 720p.json') + '" -Z "HD 16x9 720p" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"')
 #$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\1080p_x265.json') + '" -Z "1080p x265" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
 #$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\4x3_1080p_720p.json') + '" -Z "4x3 1080p to 720p" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
 #$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\SD_x264.json') + '" -Z "SD x264" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
-
+#$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\HD 16x9 720p x265.json') + '" -Z "HD 16x9 720p x265" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
+#$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\HD 16x9 720p x264.json') + '" -Z "HD 16x9 720p x264" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
 
 function Get-IniContent ($filePath)
 {
@@ -45,8 +45,8 @@ if (Test-Path ($DemuxOutFolder + "EPs")) {
         $HandBrakeCLI = (Get-IniContent settings.ini).settings.HandBrakeCLI
         $video2 = ($Destination + $video.Name)
         New-Item -ItemType "directory" -Path $Destination -ErrorAction SilentlyContinue | Out-Null
-        #$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\HD 16x9 720p.json') + '" -Z "HD 16x9 720p" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"')
-        $mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\1080p_x265.json') + '" -Z "1080p x265" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
+        $mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\HD 16x9 720p x265.json') + '" -Z "HD 16x9 720p x265" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
+        #$mytmp2 = ('--preset-import-file "' + ((Get-Location).path + '\1080p_x265.json') + '" -Z "1080p x265" -i "' + $($video.Fullname) + '" -o "' + $($video2) + '"') 
         Start-Process -FilePath $HandBrakeCLI -ArgumentList $mytmp2  -wait -NoNewWindow  | Tee-Object -FilePath "c:\$count.log"
         $count++
     }
