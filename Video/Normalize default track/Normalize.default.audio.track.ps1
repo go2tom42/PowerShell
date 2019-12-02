@@ -198,7 +198,7 @@ Remove-Item -LiteralPath ($file.FullName.TrimEnd($file.extension) + '.AUDIO.m4a'
     Start-Process -FilePath "mkvmerge" -ArgumentList ('"' + "@$($file.DirectoryName)\file.json" + '"') -wait -NoNewWindow #-RedirectStandardError nul
     Remove-Item -LiteralPath "$($file.DirectoryName)\file.json"
 
-    }
+    
 
 
 
