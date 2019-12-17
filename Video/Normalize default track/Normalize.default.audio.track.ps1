@@ -3,7 +3,7 @@ Param(
     [alias("f")]
     $File,
     [parameter(Mandatory = $false)]
-    $FFN = '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
+    $FFN = '-v -ext ac3 -c:a ac3 -b:a 384k -ar 48000 -pr -e="-ac 2"'
 )
 
 $dupcheck = Get-Childitem -LiteralPath $file -ErrorAction Stop
@@ -19,7 +19,7 @@ if ($ffn.contains('-ext') -eq $true) {
     $audioext = '.' + $ffn.Substring(($ffn.IndexOf('-ext') + 5), 3)
 }
 else {
-    $audioext = '.m4a'
+    $audioext = '.ac3'
 }
 
 function Get-DefaultAudio($file) {
@@ -107,7 +107,7 @@ function Start-Remux($file) {
     
     $json = $json += "(" , $file.FullName , ")" # Source file
     $json = $json += "--language", "0:eng", "--track-name", "0:Normalized", "--default-track", "0:yes" , "("
-    $json = $json += $file.FullName.TrimEnd($file.extension) + '.AUDIO.m4a' # normalized audio file
+    $json = $json += $file.FullName.TrimEnd($file.extension) + '.AUDIO' + $audioext # normalized audio file
     $main_tracks = $video.tracks.count - 1
     $track_order = ''
     for ($i = 1; $i -le $main_tracks; $i++) {
@@ -146,9 +146,9 @@ function Start-Remux($file) {
 Get-DefaultAudio -file $file
 $file = Get-Childitem -LiteralPath $file -ErrorAction Stop
 $file = Get-Childitem -LiteralPath $file.fullname -ErrorAction Stop
-$arguments = '"' + $file.FullName.TrimEnd($file.extension) + '.AUDIO.mkv' + '" -o "' + $file.FullName.TrimEnd($file.extension) + '.AUDIO.m4a" ' + $FFN
+$arguments = '"' + $file.FullName.TrimEnd($file.extension) + '.AUDIO.mkv' + '" -o "' + $file.FullName.TrimEnd($file.extension) + '.AUDIO' + $audioext + '" ' + $FFN
 Start-Process -FilePath "ffmpeg-normalize" -ArgumentList $arguments -wait -NoNewWindow #-RedirectStandardError nul
 Start-Remux -file $file
 
 Remove-Item -LiteralPath ($file.FullName.TrimEnd($file.extension) + '.AUDIO.mkv')
-Remove-Item -LiteralPath ($file.FullName.TrimEnd($file.extension) + '.AUDIO.m4a')
+Remove-Item -LiteralPath ($file.FullName.TrimEnd($file.extension) + '.AUDIO' + $audioext)
