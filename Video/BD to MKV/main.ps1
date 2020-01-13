@@ -1,5 +1,6 @@
 
 #varibles 
+$43check = $true
 $makemkvcon64 = "C:\Program Files (x86)\MakeMKV\makemkvcon64.exe"
 $mkvextract = "C:\Program Files\MKVToolNix\mkvextract.exe"
 
@@ -97,6 +98,7 @@ foreach ($video in $VideoList) {
     if ($length -eq '2160') {
         if ($43check -eq $true) {
             $fullname = $video.FullName
+            $HandBrakeCLI = (Get-IniContent settings.ini).settings.HandBrakeCLI
             [String]$AspectCheck = &$HandBrakeCLI --scan -t1 -i "$FullName" --json 2>1$
             if ((($AspectCheck.substring(($AspectCheck.indexof("JSON Title Set:") + 15)) | ConvertFrom-Json).TitleList.Crop[2]) -gt 360) {
                 If (!(Test-Path ($video.DirectoryName + "\4x3"))) { New-Item -ItemType Directory ($video.DirectoryName + "\4x3") }
@@ -115,6 +117,7 @@ foreach ($video in $VideoList) {
     if ($length -eq '1080') {
         if ($43check -eq $true) { 
             $fullname = $video.FullName
+            $HandBrakeCLI = (Get-IniContent settings.ini).settings.HandBrakeCLI
             [String]$AspectCheck = &$HandBrakeCLI --scan -t1 -i "$FullName" --json 2>1$
             if ((($AspectCheck.substring(($AspectCheck.indexof("JSON Title Set:") + 15)) | ConvertFrom-Json).TitleList.Crop[2]) -gt 180) {
                 If (!(Test-Path ($video.DirectoryName + "\4x3"))) { New-Item -ItemType Directory ($video.DirectoryName + "\4x3") }
@@ -154,7 +157,7 @@ foreach ($video in $VideoList) {
         Move-Item -Path ($video.FullName) -Destination ($video.DirectoryName + "\SD\" + $video.Name)
     }
 }
-Pause
+
 Start-Process -FilePath "pvw32" -ArgumentList "D:\Video\s4\test.png" -wait -NoNewWindow
 
 #Dmux files
