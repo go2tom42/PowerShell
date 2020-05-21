@@ -23,7 +23,7 @@ Contents:
 
 ## Description
 
-Please read this section for a high level introduction.
+Please read this section
 
 **What does the program do?**
 
