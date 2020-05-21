@@ -14,7 +14,7 @@ Contents:
 
 ## Requirements
 
--   MKVmerge <https://www.matroska.org/>
+-   MKVmerge <https://www.matroska.org/> installed in your \$PATH
 -   ffmpeg v3.1 or above from <http://ffmpeg.org/> installed in your \$PATH
 
 ## Usage
