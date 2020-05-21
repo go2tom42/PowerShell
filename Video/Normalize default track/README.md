@@ -33,7 +33,7 @@ That extracted audio file is normalized to  [EBU R128](https://tech.ebu.ch/docs/
 
 The normalized audio file is then remuxed back into the video, it will have the "Default" tag & be the 1st audio track in the video. 
 
-When all id don you will have a new file. Say you started with yourfile.mkv, the finished file will be named yourfile.NORMALIZED.mkv. The original file IS NOT deleted incase something went wrong. (you can uncomment last line to remove original file 
+When all is done you will have a new file. Say you started with yourfile.mkv, the finished file will be named yourfile.NORMALIZED.mkv. The original file IS NOT deleted incase something went wrong. (you can uncomment last line to remove original file)
 
 ## Examples
 
