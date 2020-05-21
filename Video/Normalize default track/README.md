@@ -37,10 +37,10 @@ When all id don you will have a new file. Say you started with yourfile.mkv, the
 
 ## Examples
 
-Normalize default track use AAC at 192k, it also downmixes audio to two channels:
+Normalize default track use ac3 at 384k, it also downmixes audio to two channels:
 
     .\Normalize.default.audio.track.ps1 "c:\ Folder with spaces\video.mkv"
-    .\Normalize.default.audio.track.ps1 -File "c:\ Folder with spaces\video.mkv" -c ac3 -ext ac3 -b 384k -ar 480000
+    .\Normalize.default.audio.track.ps1 -File "c:\ Folder with spaces\video.mkv" -c aac -ext aac -b 190k -ar 480000
 
 ## TO-DO
 
