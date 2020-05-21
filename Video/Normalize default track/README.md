@@ -14,15 +14,12 @@ Contents:
 
 ## Requirements
 
--   Python 2.7 or 3
 -   MKVmerge <https://www.matroska.org/>
 -   ffmpeg v3.1 or above from <http://ffmpeg.org/> installed in your \$PATH
--   ffmpeg-normalize run on python, can be compiled into EXE if needed
-    https://github.com/slhck/ffmpeg-normalize
 
 ## Usage
 
-    .\Normalize.default.audio.track.ps1 [-File Video] [-FFN ffmpeg-normalize commands]
+    .\Normalize.default.audio.track.ps1 [-File Video] [-c AUDIO_CODEC] [-b AUDIO_BITRATE] [-ar SAMPLE_RATE] [-ext EXTENSION]
 
 ## Description
 
@@ -32,28 +29,19 @@ Please read this section for a high level introduction.
 
 The script uses [MKVmerge](https://www.matroska.org) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [MKVmerge](https://www.matroska.org) to demux the one audio track
 
-A new file is created when all is done. Say you started with yourfile.mkv, the finished file will be named yourfile.NORMALIZED.mkv.  The original file IS NOT deleted incase something went wrong, I'm not that sure of my powershell skills.  Verify the file is correct and delete the original
+That extracted audio file is normalized to  [EBU R128](https://tech.ebu.ch/docs/tech/tech3341.pdf) standard using loudnorm via ffmpeg
 
-**How do I specify the input?**
+The normalized audio file is then remuxed back into the video, it will have the "Default" tag & be the 1st audio track in the video. 
 
-This script accepts two arguments, the file (required) and the commands you would use for **[ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)**
+When all id don you will have a new file. Say you started with yourfile.mkv, the finished file will be named yourfile.NORMALIZED.mkv. The original file IS NOT deleted incase something went wrong. (you can uncomment last line to remove original file 
 
-    -File c:\directory\file.mkv
-
-    -FFN '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
-
-If you don't supply a -FFN the one listed above is what you will get
-
-## Example
+## Examples
 
 Normalize default track use AAC at 192k, it also downmixes audio to two channels:
 
-    .\Normalize.default.audio.track.ps1 -File "c:\ Folder with spaces\video.mkv" -FFN '-v -ext m4a -c:a aac -b:a 192k -pr -e="-ac 2"'
-
--File for locations with spaces use " " or ' ' around it
-
--FFN use ' ' around the command if it contains any " ", if not use either
+    .\Normalize.default.audio.track.ps1 "c:\ Folder with spaces\video.mkv"
+    .\Normalize.default.audio.track.ps1 -File "c:\ Folder with spaces\video.mkv" -c ac3 -ext ac3 -b 384k -ar 480000
 
 ## TO-DO
 
-Remove requirments for python & ffmpeg-normalize
+Add progressbars
