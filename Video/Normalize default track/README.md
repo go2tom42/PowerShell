@@ -44,4 +44,4 @@ Normalize default track use ac3 at 384k, it also downmixes audio to two channels
 
 ## TO-DO
 
-Add progressbars
+
