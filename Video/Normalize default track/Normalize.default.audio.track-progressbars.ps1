@@ -17,6 +17,21 @@ Param(
     
 )
 
+function Do-Cleanup {
+    if (Test-Path (Join-Path -Path $env:TEMP -ChildPath "mkvSTD.txt")) { 
+        Remove-Item -LiteralPath (Join-Path -Path $env:TEMP -ChildPath "mkvSTD.txt") 
+    }
+    if (Test-Path (Join-Path -Path $env:TEMP -ChildPath "mkvERR.txt")) { 
+        Remove-Item -LiteralPath (Join-Path -Path $env:TEMP -ChildPath "mkvERR.txt") 
+    }
+    if (Test-Path (Join-Path -Path $env:TEMP -ChildPath "stdout.txt")) { 
+        Remove-Item -LiteralPath (Join-Path -Path $env:TEMP -ChildPath "stdout.txt") 
+    }
+    if (Test-Path (Join-Path -Path $env:TEMP -ChildPath "stderr.txt")) { 
+        Remove-Item -LiteralPath (Join-Path -Path $env:TEMP -ChildPath "stderr.txt") 
+    }   
+    pause
+}
 
 function Get-DefaultAudio($file) {
 
@@ -45,8 +60,11 @@ function Get-DefaultAudio($file) {
     $json = $json += "$default_track" + ":yes"
     $json = $json += "(", $file.FullName , ")"
     $json | ConvertTo-Json -depth 100 | Out-File -LiteralPath "$($file.DirectoryName)\$($file.basename).json"
- 
+    
+    
+
     $nid = get-process mkvmerge -ErrorAction SilentlyContinue
+       
     if ($nid) {
         echo "Waiting for MKVMERGE to finish"
         wait-process -id $nid.id
@@ -55,15 +73,18 @@ function Get-DefaultAudio($file) {
         Remove-Variable nid
     }
 
+
     $nid = get-process mkvmerge -ErrorAction SilentlyContinue
+       
     if ($nid) {
         echo "Waiting for MKVMERGE to finish"
         wait-process -id $nid.id
         Remove-Variable nid
     }
 
-    [string]$mkvSTDOUT_FILE = "mkvSTD.txt"
-    [string]$mkvSTDERROUT_FILE = "mkvERR.txt"
+    
+    [string]$mkvSTDOUT_FILE = Join-Path -Path $env:TEMP -ChildPath "mkvSTD.txt"
+    [string]$mkvSTDERROUT_FILE = Join-Path -Path $env:TEMP -ChildPath "mkvERR.txt"
     $mkvmergePROS = Start-Process -FilePath "mkvmerge" -ArgumentList ('"' + "@$($file.DirectoryName)\$($file.basename).json" + '"') -RedirectStandardError $mkvSTDERROUT_FILE -RedirectStandardOutput $mkvSTDOUT_FILE -WindowStyle Hidden -PassThru
     Start-Sleep -m 1
     Do{
@@ -76,10 +97,10 @@ function Get-DefaultAudio($file) {
         }
 
     }Until ($mkvmergePROS.HasExited)
-
+    
     write-progress -parentId 1 -Activity "MKVmerge" -PercentComplete 100 -Status ("Extracting audio file {0:n2}% completed..." -f 100)
-    Remove-Item -Path ".\mkvSTD.txt"
-    Remove-Item -Path ".\mkvERR.txt"
+    Remove-Item -Path $mkvSTDOUT_FILE
+    Remove-Item -Path $mkvSTDERROUT_FILE
     Remove-Item -LiteralPath "$($file.DirectoryName)\$($file.basename).json"
 }
 
@@ -103,8 +124,7 @@ function Start-Remux($file) {
         }
     
         if ($obj.type -eq "subtitles") {
-            #$json = $json += "--sub-charset" , "$($obj.id):$($obj.properties.encoding)" 
-            $json = $json += "--language" , "$($obj.id):$($obj.properties.language)"
+                $json = $json += "--language" , "$($obj.id):$($obj.properties.language)"
             if ($obj.properties.track_name) {
                 $json = $json += "--track-name" , "$($obj.id):$($obj.properties.track_name)"
             }
@@ -120,8 +140,10 @@ function Start-Remux($file) {
         $track_order = $track_order + ",0:$i"
     }
     $json = $json += ")", "--track-order", "0:0,1:0$track_order"
+    
     $json | ConvertTo-Json -depth 100 | Out-File -LiteralPath "$($file.DirectoryName)\$($file.basename).json"
     
+
     $nid = get-process mkvmerge -ErrorAction SilentlyContinue
        
     if ($nid) {
@@ -139,35 +161,37 @@ function Start-Remux($file) {
         wait-process -id $nid.id
         Remove-Variable nid
     }
-        [string]$mkvSTDOUT_FILE = "mkvSTD.txt"
-        [string]$mkvSTDERROUT_FILE = "mkvERR.txt"
+
+    
+    
+        [string]$mkvSTDOUT_FILE = Join-Path -Path $env:TEMP -ChildPath "mkvSTD.txt"
+        [string]$mkvSTDERROUT_FILE = Join-Path -Path $env:TEMP -ChildPath "mkvERR.txt"
     
             $mkvmergePROS = Start-Process -FilePath "mkvmerge" -ArgumentList ('"' + "@$($file.DirectoryName)\$($file.basename).json" + '"') -RedirectStandardError $mkvSTDERROUT_FILE -RedirectStandardOutput $mkvSTDOUT_FILE -WindowStyle Hidden -PassThru
-            #progress bar monitors the trancoding log for time duration and ends when process has exited
+    
         Start-Sleep -m 1
         Do{
             Start-Sleep -m 1
             $MKVProgress = (Get-content $mkvSTDOUT_FILE | Select-Object -Last 1) | Where-Object {$_ -like "Progress*"}
-            #$MKVProgress = [regex]::split((Get-content $mkvSTDOUT_FILE | Select-Object -Last 1), '(,|\s+)') | Where-Object {$_ -like "Progress*"}
-            If($MKVProgress){
+                If($MKVProgress){
                 $MKVPercent = $MKVProgress -replace '\D+'
                 write-progress -parentId 1 -Activity "MKVmerge" -PercentComplete $MKVPercent -Status ("Muxing video file {0:n2}% completed..." -f $MKVPercent)
             
             }
     
         }Until ($mkvmergePROS.HasExited)
-
+    
         write-progress -parentId 1 -Activity "MKVmerge" -PercentComplete 100 -Status ("Muxing video file {0:n2}% completed..." -f 100)
-        Remove-Item -Path ".\mkvSTD.txt"
-        Remove-Item -Path ".\mkvERR.txt"
+        Remove-Item -Path $mkvSTDERROUT_FILE
+        Remove-Item -Path $mkvSTDOUT_FILE
         Remove-Item -LiteralPath "$($file.DirectoryName)\$($file.basename).json"
 }
 
 function Normalize($file) {
 
-    [string]$STDOUT_FILE = "stdout.txt"
+    [string]$STDOUT_FILE = Join-Path -Path $env:TEMP -ChildPath "stdout.txt"
     [string]$OutputFileExt = "." + $audioext
-    [string]$STDERR_FILE = "stderr.txt"
+    [string]$STDERR_FILE = Join-Path -Path $env:TEMP -ChildPath "stderr.txt"
 
     $file = Get-Childitem -LiteralPath $file -ErrorAction Stop
     $Source_Path = $file.FullName.TrimEnd($file.extension) + '.mkv' 
@@ -194,6 +218,8 @@ function Normalize($file) {
 
     }Until ($ffmpeg.HasExited)
     
+    
+    
     $input_i = (((Get-Content -LiteralPath $STDERR_FILE | Where-Object { $_ -Like '*input_i*' }).Split(" "))[2]).Replace('"', "").Replace(',', "")
     $input_tp = (((Get-Content -LiteralPath $STDERR_FILE | Where-Object { $_ -Like '*input_tp*' }).Split(" "))[2]).Replace('"', "").Replace(',', "")
     $input_lra = (((Get-Content -LiteralPath $STDERR_FILE | Where-Object { $_ -Like '*input_lra*' }).Split(" "))[2]).Replace('"', "").Replace(',', "")
@@ -205,8 +231,8 @@ function Normalize($file) {
     $normalization_type = (Get-Content -LiteralPath $STDERR_FILE | Where-Object {$_ -Like '*normalization_type*'}).Replace('"',"").Replace(',',"")
     $target_offset = (((Get-Content -LiteralPath $STDERR_FILE | Where-Object { $_ -Like '*target_offset*' }).Split(" "))[2]).Replace('"', "").Replace(',', "")
 
-    Remove-Item -Path ".\stdout.txt"
-    Remove-Item -Path ".\stderr.txt"
+    Remove-Item -Path $STDOUT_FILE
+    Remove-Item -Path $STDERR_FILE
 
     $ArgumentList = "-progress - -nostats -nostdin -y -i ""$Source_Path"" -threads 0 -hide_banner -filter_complex `"[0:0]loudnorm=I=-23:TP=-2.0:LRA=7:measured_I=""$input_i"":measured_LRA=""$input_lra"":measured_TP=""$input_tp"":measured_thresh=""$input_thresh"":offset=""$target_offset"":linear=true:print_format=json[norm0]`" -map_metadata 0 -map_metadata:s:a:0 0:s:a:0 -map_chapters 0 -c:v copy -map [norm0] -c:a $codec -b:a $bitrate -ar $freq -c:s copy -ac 2 ""$PASS2_FILE"""
     write-progress -id 1 -activity "Normalizing audio" -status "Stage 3/4" -PercentComplete 46
@@ -226,8 +252,8 @@ function Normalize($file) {
         }
 
     }Until ($ffmpeg.HasExited)
-    Remove-Item -Path ".\stdout.txt"
-    Remove-Item -Path ".\stderr.txt"
+    Remove-Item -Path $STDERR_FILE
+    Remove-Item -Path $STDOUT_FILE
 
 }
 
@@ -242,24 +268,29 @@ if (Test-Path ($dupcheck)) {
 
 $Host.PrivateData.ProgressBackgroundColor=’Green’
 $Host.PrivateData.ProgressForegroundColor=’Black’
+Do-Cleanup
 $totalTime = FFProbe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$file"
 
 write-progress -id 1 -activity "Normalizing audio" -status "Stage 1/4" -PercentComplete 0
 write-progress -parentId 1 -Activity "Mkvmerge"
+
 Get-DefaultAudio -file $file
 
 $file = Get-Childitem -LiteralPath $file -ErrorAction Stop
 $file = Get-Childitem -LiteralPath $file.fullname -ErrorAction Stop
 write-progress -id 1 -activity "Normalizing audio" -status "Stage 2/4" -PercentComplete 1
 write-progress -parentId 1 -Activity "2 pass loudnorm" -Status "Pass 1 of 2"
+
 Normalize -file ($file.FullName.TrimEnd($file.extension) + '.AUDIO.mkv')
 
 
 write-progress -id 1 -activity "Normalizing audio" -status "Stage 4/4" -PercentComplete 96
 write-progress -parentId 1 -Activity "Mkvmerge"
+
 Start-Remux -file $file
 
 Remove-Item -LiteralPath ($file.FullName.TrimEnd($file.extension) + '.AUDIO.mkv')
 Remove-Item -LiteralPath ($file.FullName.TrimEnd($file.extension) + '.AUDIO.' + $audioext)
 
 #Remove-Item -Path $file #deletes orignal file
+
