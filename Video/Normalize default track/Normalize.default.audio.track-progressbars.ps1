@@ -30,7 +30,6 @@ function Do-Cleanup {
     if (Test-Path (Join-Path -Path $env:TEMP -ChildPath "stderr.txt")) { 
         Remove-Item -LiteralPath (Join-Path -Path $env:TEMP -ChildPath "stderr.txt") 
     }   
-    pause
 }
 
 function Get-DefaultAudio($file) {
