@@ -82,8 +82,8 @@ function Get-DefaultAudio($file) {
     }
 
     
-    [string]$mkvSTDOUT_FILE = Join-Path -Path $env:TEMP -ChildPath "mkvSTD.txt"
-    [string]$mkvSTDERROUT_FILE = Join-Path -Path $env:TEMP -ChildPath "mkvERR.txt"
+    [string]$mkvSTDOUT_FILE = Join-Path -Path $env:TEMP -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
+    [string]$mkvSTDERROUT_FILE = Join-Path -Path $env:TEMP -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
     $mkvmergePROS = Start-Process -FilePath "mkvmerge" -ArgumentList ('"' + "@$($file.DirectoryName)\$($file.basename).json" + '"') -RedirectStandardError $mkvSTDERROUT_FILE -RedirectStandardOutput $mkvSTDOUT_FILE -WindowStyle Hidden -PassThru
     Start-Sleep -m 1
     Do{
@@ -188,9 +188,9 @@ function Start-Remux($file) {
 
 function Normalize($file) {
 
-    [string]$STDOUT_FILE = Join-Path -Path $env:TEMP -ChildPath "stdout.txt"
+    [string]$STDOUT_FILE = Join-Path -Path $env:TEMP -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
     [string]$OutputFileExt = "." + $audioext
-    [string]$STDERR_FILE = Join-Path -Path $env:TEMP -ChildPath "stderr.txt"
+    [string]$STDERR_FILE = Join-Path -Path $env:TEMP -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
 
     $file = Get-Childitem -LiteralPath $file -ErrorAction Stop
     $Source_Path = $file.FullName.TrimEnd($file.extension) + '.mkv' 
