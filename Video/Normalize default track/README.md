@@ -25,7 +25,7 @@ Contents:
 
 Please read this section
 
-**What does the program do?**
+**What does the script do?**
 
 The script uses [MKVmerge](https://mkvtoolnix.download/) to find the default audio track in your video.  If no track has the "Default" tag if picks the first audio track listed in the video file.  Then it uses [MKVmerge](https://mkvtoolnix.download/) to demux the one audio track
 
@@ -35,7 +35,6 @@ The normalized audio file is then remuxed back into the video, it will have the 
 
 When all is done you will have a new file. Say you started with yourfile.mkv, the finished file will be named yourfile.NORMALIZED.mkv. The original file IS NOT deleted incase something went wrong. (you can uncomment last line to remove original file)
 
-Progress Bar version also requires ffprobe, but that is included with ffmpeg
 ## Examples
 
 Normalize default track use ac3 at 384k, it also downmixes audio to two channels:
