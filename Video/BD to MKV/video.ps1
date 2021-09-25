@@ -31,17 +31,17 @@ function Get-IniContent ($filePath)
     }
     return $ini
 }
-$DemuxOutFolder = (Get-IniContent settings.ini).settings.DemuxOutFolder
+$SourceFolder = (Get-IniContent settings.ini).settings.SourceFolder
 
 
 
-if (Test-Path ($DemuxOutFolder + "EPs")) { 
-    $VideoList = Get-ChildItem -Path ($DemuxOutFolder + 'EPs') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
+if (Test-Path ($SourceFolder + "EPs")) { 
+    $VideoList = Get-ChildItem -Path ($SourceFolder + 'EPs') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     $count = 1
     foreach ($video in $VideoList) {
         $Destination = (Get-IniContent settings.ini).settings.Destination
         $Destination = ($Destination + 'EPs\video\')
-        $DemuxOutFolder = (Get-IniContent settings.ini).settings.DemuxOutFolder
+        $SourceFolder = (Get-IniContent settings.ini).settings.SourceFolder
         $HandBrakeCLI = (Get-IniContent settings.ini).settings.HandBrakeCLI
         $video2 = ($Destination + $video.Name)
         New-Item -ItemType "directory" -Path $Destination -ErrorAction SilentlyContinue | Out-Null
@@ -52,12 +52,12 @@ if (Test-Path ($DemuxOutFolder + "EPs")) {
     }
 }
 
-if (Test-Path ($DemuxOutFolder + "SD")) { 
-    $VideoList = Get-ChildItem -Path ($DemuxOutFolder + 'SD') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
+if (Test-Path ($SourceFolder + "SD")) { 
+    $VideoList = Get-ChildItem -Path ($SourceFolder + 'SD') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     foreach ($video in $VideoList) {
         $Destination = (Get-IniContent settings.ini).settings.Destination
         $Destination = ($Destination + 'SD\video\')
-        $DemuxOutFolder = (Get-IniContent settings.ini).settings.DemuxOutFolder
+        $SourceFolder = (Get-IniContent settings.ini).settings.SourceFolder
         $HandBrakeCLI = (Get-IniContent settings.ini).settings.HandBrakeCLI
         $video2 = ($Destination + $video.Name)
         New-Item -ItemType "directory" -Path $Destination -ErrorAction SilentlyContinue | Out-Null
@@ -70,12 +70,12 @@ if (Test-Path ($DemuxOutFolder + "SD")) {
 
 
 
-if (Test-Path ($DemuxOutFolder + "HD")) { 
-    $VideoList = Get-ChildItem -Path ($DemuxOutFolder + 'HD') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
+if (Test-Path ($SourceFolder + "HD")) { 
+    $VideoList = Get-ChildItem -Path ($SourceFolder + 'HD') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     foreach ($video in $VideoList) {
         $Destination = (Get-IniContent settings.ini).settings.Destination
         $Destination = ($Destination + 'HD\video\')
-        $DemuxOutFolder = (Get-IniContent settings.ini).settings.DemuxOutFolder
+        $SourceFolder = (Get-IniContent settings.ini).settings.SourceFolder
         $HandBrakeCLI = (Get-IniContent settings.ini).settings.HandBrakeCLI
         $video2 = ($Destination + $video.Name)
         New-Item -ItemType "directory" -Path $Destination -ErrorAction SilentlyContinue | Out-Null
@@ -86,12 +86,12 @@ if (Test-Path ($DemuxOutFolder + "HD")) {
 }
 
 
-if (Test-Path ($DemuxOutFolder + "4x3")) { 
-    $VideoList = Get-ChildItem -Path ($DemuxOutFolder + '4x3') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
+if (Test-Path ($SourceFolder + "4x3")) { 
+    $VideoList = Get-ChildItem -Path ($SourceFolder + '4x3') -Filter "*.mkv" -ErrorAction SilentlyContinue -Force | Sort-Object
     foreach ($video in $VideoList) {
         $Destination = (Get-IniContent settings.ini).settings.Destination
         $Destination = ($Destination + '4x3\video\')
-        $DemuxOutFolder = (Get-IniContent settings.ini).settings.DemuxOutFolder
+        $SourceFolder = (Get-IniContent settings.ini).settings.SourceFolder
         $HandBrakeCLI = (Get-IniContent settings.ini).settings.HandBrakeCLI
         $video2 = ($Destination + $video.Name)
         New-Item -ItemType "directory" -Path $Destination -ErrorAction SilentlyContinue | Out-Null
