@@ -1,4 +1,5 @@
-do-many input [input ...]
+
+    .do-many input [input ...]
            -h/-help (This Screen)
            -app (app to do many of) (*Mandatory*)
            -path (path to the many files) (*Mandatory*)
