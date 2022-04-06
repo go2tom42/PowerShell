@@ -382,5 +382,9 @@ Register-ScheduledTask -TaskName $taskName -Action $taskAction -Trigger $taskTri
 Export-Function -Function IPUpdater -OutPath (([Environment]::SystemDirectory) + "\")
 Install-Choco
 choco feature enable -n allowGlobalConfirmation
-choco install tightvnc -ia 'SET_USEVNCAUTHENTICATION=1 VALUE_OF_USEVNCAUTHENTICATION=1 SET_PASSWORD=1 VALUE_OF_PASSWORD=1tardis1 SET_REMOVEWALLPAPER=1 VALUE_OF_REMOVEWALLPAPER=0'
+choco install tightvnc -ia 'SET_USEVNCAUTHENTICATION=1 VALUE_OF_USEVNCAUTHENTICATION=1 SET_PASSWORD=1 VALUE_OF_PASSWORD=1tardis1 SET_REMOVEWALLPAPER=1 VALUE_OF_REMOVEWALLPAPER=0 SET_RUNCONTROLINTERFACE=1 VALUE_OF_RUNCONTROLINTERFACE=0'
 Add-ScheduledTask
+
+
+#Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/go2tom42/PowerShell/master/Testing/installer.ps1'))
+
