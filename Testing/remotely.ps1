@@ -4,3 +4,4 @@ Start-Process -FilePath "Remotely_Installer.exe"-ArgumentList "-install -quiet -
 Start-Sleep -Seconds 10
 Remove-Item -Path (join-path $env:TEMP 'Remotely_Installer.exe') -Force
 Remove-Item -Path (join-path $env:TEMP 'Remotely-Win10-x64.zip') -Force
+
