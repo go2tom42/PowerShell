@@ -3,3 +3,4 @@
 Start-Process -FilePath "Remotely_Installer.exe"-ArgumentList "-install -quiet -organizationid `"4cdb842b-3104-4d01-83b6-5d117f61550c`" -serverurl `"https://remotely.tom42.pw`" -path `"Remotely-Win10-x64.zip`"" -WorkingDirectory $env:TEMP 
 Remove-Item -Path (join-path $env:TEMP 'Remotely_Installer.exe')
 Remove-Item -Path (join-path $env:TEMP 'Remotely-Win10-x64.zip')
+pause
