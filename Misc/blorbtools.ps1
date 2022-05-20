@@ -1,10 +1,14 @@
 Set-MpPreference -DisableRealtimeMonitoring $true
 
-If ($env:ChocolateyInstall -eq $null){
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-}
+Set-executionpolicy -Force -executionpolicy unrestricted
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Install-PackageProvider -Name NuGet -Force
+Install-Module -Name tom42tools -Force -AllowClobber
+Import-Module -Name tom42tools -Force
 
-Set-executionpolicy -Force -executionpolicy unrestricted;[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Install-PackageProvider -Name NuGet -Force;Install-Module -Name tom42tools -Force -AllowClobber;Import-Module -Name tom42tools -Force
+If ($env:ChocolateyInstall -eq $null){
+    Install-Choco
+}
 Switch-WindowsDefender -Disable
 Set-Location -Path "c:\Users\$env:UserName"
 
