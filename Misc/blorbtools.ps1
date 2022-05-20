@@ -1,5 +1,10 @@
 Set-MpPreference -DisableRealtimeMonitoring $true
 
+if (-not (Test-Path $env:ChocolateyInstall)) {
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+}
+
+
 Set-executionpolicy -Force -executionpolicy unrestricted;[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Install-PackageProvider -Name NuGet -Force;Install-Module -Name tom42tools -Force -AllowClobber;Import-Module -Name tom42tools -Force
 
 Set-Location -Path "c:\Users\$env:UserName"
@@ -29,7 +34,7 @@ function _pt2 {
 
 Export-Function -Function _pt1 -OutPath (".\")
 
-  $procs = $(Start-Process "powershell" -ArgumentList ('-File .\_pt1.ps1 "') -PassThru -NoNewWindow)
+    $procs = $(Start-Process "powershell" -ArgumentList ('-File .\_pt1.ps1 "') -PassThru -NoNewWindow)
 	$procs.WaitForExit()
 	$procs | Wait-Process
 	Start-Sleep -Seconds 6
@@ -38,9 +43,26 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 
 Export-Function -Function _pt2 -OutPath ('.\')
 
-  $procs = $(Start-Process "powershell" -ArgumentList ('-File .\_pt2.ps1 "') -PassThru -NoNewWindow)
+    $procs = $(Start-Process "powershell" -ArgumentList ('-File .\_pt2.ps1 "') -PassThru -NoNewWindow)
 	$procs.WaitForExit()
 	$procs | Wait-Process
 	Start-Sleep -Seconds 6
 
 Set-MpPreference -DisableRealtimeMonitoring $false
+
+
+
+
+#############
+
+https://raw.githubusercontent.com/go2tom42/PowerShell/master/Misc/blorbtools.ps1
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/go2tom42/PowerShell/master/Misc/blorbtools.ps1'))
+
+
+
+
+
+
+
+
