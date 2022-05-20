@@ -5,7 +5,7 @@ If ($env:ChocolateyInstall -eq $null){
 }
 
 Set-executionpolicy -Force -executionpolicy unrestricted;[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Install-PackageProvider -Name NuGet -Force;Install-Module -Name tom42tools -Force -AllowClobber;Import-Module -Name tom42tools -Force
-
+Toggle-WindowsDefender -Disable
 Set-Location -Path "c:\Users\$env:UserName"
 
 function _pt1 {
@@ -48,5 +48,5 @@ Export-Function -Function _pt2 -OutPath ('.\')
 	Start-Sleep -Seconds 6
 
 Set-MpPreference -DisableRealtimeMonitoring $false
-
+Toggle-WindowsDefender -Enable
 
