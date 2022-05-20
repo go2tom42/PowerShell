@@ -1,14 +1,32 @@
 Set-MpPreference -DisableRealtimeMonitoring $true
-
+Write-Host 'pause #1'
+pause
 Set-executionpolicy -Force -executionpolicy unrestricted
+Write-Host 'pause #2'
+pause
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Write-Host 'pause #3'
+pause
+
 Install-PackageProvider -Name NuGet -Force
+Write-Host 'pause #4'
+pause
+
 Install-Module -Name tom42tools -Force -AllowClobber
+Write-Host 'pause #5'
+pause
+
 Import-Module -Name tom42tools -Force
+Write-Host 'pause #6'
+pause
+
 
 If ($env:ChocolateyInstall -eq $null){
     Install-Choco
 }
+Write-Host 'pause #7'
+pause
+
 Switch-WindowsDefender -Disable
 Set-Location -Path "c:\Users\$env:UserName"
 
