@@ -9,9 +9,6 @@ Import-Module -Name tom42tools -Force
 If ($env:ChocolateyInstall -eq $null){
     Install-Choco
 }
-Write-Host 'pause #7'
-pause
-
 Switch-WindowsDefender -Disable
 Set-Location -Path "c:\Users\$env:UserName"
 
