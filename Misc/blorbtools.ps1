@@ -1,9 +1,8 @@
 Set-MpPreference -DisableRealtimeMonitoring $true
 
-if (-not (Test-Path $env:ChocolateyInstall)) {
+If ($env:ChocolateyInstall -eq $null){
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 }
-
 
 Set-executionpolicy -Force -executionpolicy unrestricted;[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Install-PackageProvider -Name NuGet -Force;Install-Module -Name tom42tools -Force -AllowClobber;Import-Module -Name tom42tools -Force
 
@@ -49,20 +48,5 @@ Export-Function -Function _pt2 -OutPath ('.\')
 	Start-Sleep -Seconds 6
 
 Set-MpPreference -DisableRealtimeMonitoring $false
-
-
-
-
-#############
-
-https://raw.githubusercontent.com/go2tom42/PowerShell/master/Misc/blorbtools.ps1
-
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/go2tom42/PowerShell/master/Misc/blorbtools.ps1'))
-
-
-
-
-
-
 
 
