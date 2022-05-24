@@ -1,4 +1,3 @@
-
 Set-MpPreference -DisableRealtimeMonitoring $true
 Set-ExecutionPolicy Bypass -Scope Process -Force
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -9,8 +8,11 @@ Import-Module -Name tom42tools -Force
 If ($env:ChocolateyInstall -eq $null){Install-Choco}
 Switch-WindowsDefender -Disable
 Set-Location -Path "c:\Users\$env:UserName"
-md work
-cd work
+new-item "c:\Users\$env:UserName\work" -itemtype directory
+
+Set-Location -Path "c:\Users\$env:UserName\work"
+((Get-Location).Path)
+Pause
 choco feature enable -n allowGlobalConfirmation
 choco install cyg-get cygwin git
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
@@ -20,6 +22,7 @@ $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentC
 $newpath = “$oldpath;c:\tools\cygwin\bin”
 Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+pause
 
 git clone https://github.com/ganelson/inweb.git
 cd inweb
@@ -35,7 +38,7 @@ git clone https://github.com/ganelson/inform.git
 cd inform
 git reset --hard 4d9ef0868f693e14f5219fd91756b6d365b7d261
 cd ..
-
+pause
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('#!/bin/bash')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make -f inweb/inweb.mk initial')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('inweb/Tangled/inweb -help')
@@ -49,8 +52,8 @@ Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make forc
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make -f inform6/inform6.mk interpreters')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('inblorb/Tangled/inblorb -help')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('../intest/Tangled/intest inform7 -show Acidity')
-#Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('read -p "Press enter to continue"')
 dos2unix test.sh
+pause
 Start-Process -FilePath "mintty" -ArgumentList '--exec "./test.sh"' -Wait
 
 #cd /cygdrive/c/Users/tom42/work/inform
@@ -58,3 +61,4 @@ Start-Process -FilePath "mintty" -ArgumentList '--exec "./test.sh"' -Wait
 
 Get-ChildItem -Path ((Get-Location).Path) -Filter '*.exe' -Recurse -ErrorAction SilentlyContinue -Force |
 Compress-Archive -DestinationPath "c:\Users\$env:UserName\Desktop\Inform-CLI-Tools.zip"
+
