@@ -15,11 +15,12 @@ Set-Location -Path "c:\Users\$env:UserName\work"
 Pause
 choco feature enable -n allowGlobalConfirmation
 choco install cyg-get cygwin git
+
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 cyg-get clang dos2unix libclang-devel libclang8 make mingw64-i686-clang mingw64-x86_64-clang
 $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
-$newpath = “$oldpath;c:\tools\cygwin\bin”
+$newpath = "$oldpath;c:\tools\cygwin\bin"
 Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 pause
