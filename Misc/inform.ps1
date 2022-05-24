@@ -39,17 +39,14 @@ cd ..
 
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('#!/bin/bash')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make -f inweb/inweb.mk initial')
-Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('inweb/Tangled/inweb -help')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('inweb/Tangled/inweb intest -prototype intest/scripts/intest.mkscript -makefile intest/intest.mk')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make -f intest/intest.mk force')
-Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('intest/Tangled/intest -help')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('cd inform')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('../inweb/Tangled/inweb -prototype scripts/inform.mkscript -makefile makefile')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make makers')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make force')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make -f inform6/inform6.mk interpreters')
-Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('inblorb/Tangled/inblorb -help')
-Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('../intest/Tangled/intest inform7 -show Acidity')
+
 dos2unix test.sh
 Start-Process -FilePath "mintty" -ArgumentList '--exec "./test.sh"' -Wait
 
@@ -58,4 +55,4 @@ Start-Process -FilePath "mintty" -ArgumentList '--exec "./test.sh"' -Wait
 
 Get-ChildItem -Path ((Get-Location).Path) -Filter '*.exe' -Recurse -ErrorAction SilentlyContinue -Force |
 Compress-Archive -DestinationPath "c:\Users\$env:UserName\Desktop\Inform-CLI-Tools.zip"
-
+exit
