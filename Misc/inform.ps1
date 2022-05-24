@@ -11,8 +11,6 @@ Set-Location -Path "c:\Users\$env:UserName"
 new-item "c:\Users\$env:UserName\work" -itemtype directory
 
 Set-Location -Path "c:\Users\$env:UserName\work"
-((Get-Location).Path)
-Pause
 choco feature enable -n allowGlobalConfirmation
 choco install cyg-get cygwin git
 
@@ -23,7 +21,6 @@ $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentC
 $newpath = "$oldpath;c:\tools\cygwin\bin"
 Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-pause
 
 git clone https://github.com/ganelson/inweb.git
 cd inweb
@@ -39,7 +36,7 @@ git clone https://github.com/ganelson/inform.git
 cd inform
 git reset --hard 4d9ef0868f693e14f5219fd91756b6d365b7d261
 cd ..
-pause
+
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('#!/bin/bash')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make -f inweb/inweb.mk initial')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('inweb/Tangled/inweb -help')
@@ -54,7 +51,6 @@ Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('make -f i
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('inblorb/Tangled/inblorb -help')
 Add-Content -Path (Join-Path ((Get-Location).Path) 'test.sh') -Value ('../intest/Tangled/intest inform7 -show Acidity')
 dos2unix test.sh
-pause
 Start-Process -FilePath "mintty" -ArgumentList '--exec "./test.sh"' -Wait
 
 #cd /cygdrive/c/Users/tom42/work/inform
