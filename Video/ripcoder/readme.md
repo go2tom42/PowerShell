@@ -4,9 +4,9 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
 
  **Requirements** 
 
- RipBot264v1.26.0 https://forum.doom9.org/showthread.php?t=127611
- Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases
- MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows
+ RipBot264v1.26.0 https://forum.doom9.org/showthread.php?t=127611  
+ Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases  
+ MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows  
 
  YOU NEED TO SET 3 VARIABLES, SEE LINE 121 in script
 
