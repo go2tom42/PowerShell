@@ -32,5 +32,5 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
   -autocrop [Audio crop black bars] 
   ```
 
- Examples
+ **Example**  
   `ripcoder "C:\Vi deo\P&R\s02e15.mkv" -crf 16 -preset veryslow -profile main`
