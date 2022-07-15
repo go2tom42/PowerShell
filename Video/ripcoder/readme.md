@@ -11,7 +11,8 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
  YOU NEED TO SET 3 VARIABLES, SEE LINE 121 in script
 
  **Usage**
- ```-File [Path to file] 
+ ```
+ -File [Path to file] 
  Audio normalizion Options
   -codec [Audio for normailzed file, ac3 is default]
   -audioext [File extention for selected codec, ac3 is default]
@@ -28,7 +29,8 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
   -myprofile [Options baseline, main, & high. Default is high]`
   -tune [Options none, film, animation, grain, stillimage, psnr, ssim, fastdecode, & zerolatency. Default is none]`
   -s720 [Resize to 720p]` 
-  -autocrop [Audio crop black bars]```
+  -autocrop [Audio crop black bars] 
+  ```
 
  Examples
   `ripcoder "C:\Vi deo\P&R\s02e15.mkv" -crf 16 -preset veryslow -profile main`
