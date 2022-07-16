@@ -1228,28 +1228,20 @@ _DeMuxAll($file)
 Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
 New-Item -ItemType "directory" -Path $temppath -ErrorAction SilentlyContinue | Out-Null
 
-Read-Host -Prompt "After _demux"
-
 _CreateVideoIndexFile
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\CreateVideoIndexFile.avs"') -wait -NoNewWindow
-
-Read-Host -Prompt "After _CreateVideoIndexFile"
 
 _getinfo
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\getinfo.avs"') -wait -NoNewWindow
 
-Read-Host -Prompt "After _getinfo"
-
 $fps = Get-Content ($temppath + "\info.txt") -First 1
 _job88_EncodingClient $File
-Read-Host -Prompt "After _job88_EncodingClient"
+
 
 if ($autocrop -eq $true ) {
     _DetectBorders $file
 }
 _job88
-
-Read-Host -Prompt "After _job88"
 
 Start-Process -FilePath $EncodingServer -WindowStyle Minimized
 Start-Sleep -Seconds 1
