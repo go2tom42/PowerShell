@@ -13,7 +13,7 @@ It is tailored to completely max out a CPU (I using a AMD 5950x), just using x26
 - Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases  
 - MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows  
 
- YOU NEED TO SET 3 VARIABLES, SEE LINE 165 in script
+ YOU NEED TO SET 3 VARIABLES, SEE LINE 229 in script
 
  **Basic Usage**
 
