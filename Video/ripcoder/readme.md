@@ -1,35 +1,42 @@
+# RIPCODER
+
+#### A Powershell script stealing everything it can from RipBot264
+
+
+
 Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (and keeps original) and it creates at SRT from a SUP.
 
- It is tailored to completely max out a CPU (I using a AMD 5950x), just using x264 would only use like 60% so here we are
+It is tailored to completely max out a CPU (I using a AMD 5950x), just using x264 would only use like 60% so here we are
 
- **Requirements** 
+**Requirements** 
 
- RipBot264v1.26.0 https://forum.doom9.org/showthread.php?t=127611  
- Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases  
- MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows  
+- RipBot264v1.26.0 https://forum.doom9.org/showthread.php?t=127611  
 
- YOU NEED TO SET 3 VARIABLES, SEE LINE 121 in script
+- Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases  
+- MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows  
 
- **Usage**
+ YOU NEED TO SET 3 VARIABLES, SEE LINE 165 in script
 
- -File [Path to file] 
+ **Basic Usage**
+
+ ripcoder file [Path to file] 
 
 #### Main Options  
 
 #####  Audio normalizion Options  
 
--   `-codec ac3` [Audio for normalized file, **ac3** is default]  
--   `-audioext ac3` [File extension for selected codec, **ac3** is default]  
--   `-bitrate 192k` [Audio file bitrate, **192k** is default]  
--   `-freq 48000` [Audio file frequency , **48000** is default]  
+-   `-codec ac3` [Audio for normalized file, **ac3** is default]
+-   `-audioext ac3` [File extension for selected codec, **ac3** is default]
+-   `-bitrate 192k` [Audio file bitrate, **192k** is default]
+-   `-freq 48000` [Audio file frequency , **48000** is default]
 
 #####  Video Options  
 
--   `-crf 20` [Constant Rate Factor, range 0 to 51, default is 20 ]  
--   `-level 4.0` [Options 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2, 4.0, 4.1, 4.2, 5.0, & 5.1. Default is 4.0]  
--   `-preset veryslow` [Options ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, & placebo. Default is veryslow]  
--   `-myprofile high` [Options baseline, main, & high. Default is high]  
--   `-tune none` [Options none, film, animation, grain, stillimage, psnr, ssim, fastdecode, & zerolatency. Default is none]  
+-   `-crf 20` [Constant Rate Factor, range 0 to 51, default is **20** ]  
+-   `-level 4.0` [Options 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2, 4.0, 4.1, 4.2, 5.0, & 5.1. Default is **4.0**]  
+-   `-preset veryslow` [Options ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, & placebo. Default is **veryslow**]  
+-   `-myprofile high` [Options baseline, main, & high. Default is **high**]  
+-   `-tune none` [Options none, film, animation, grain, stillimage, psnr, ssim, fastdecode, & zerolatency. Default is **none**]  
 
 #####  Extra Options  
 
