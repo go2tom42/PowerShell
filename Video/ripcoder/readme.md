@@ -2,7 +2,7 @@
 
 #### A Powershell script stealing everything it can from RipBot264
 
-Runs on Powershell 7, might work on Powershell 5 never tried, to try change on line 1269 "pwsh" to "powershell"
+Runs on Powershell 7, might work on Powershell 5 never tried, to try change on line 1400 "pwsh" to "powershell"
 
 End goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (EBU R128 loudness plus keeps original) and it creates a SRT from a SUP.
 
