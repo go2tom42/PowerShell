@@ -2,7 +2,7 @@
 #
 ##### A Powershell script stealing everything it can from RipBot264
 #
-#End goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (and keeps original) and it creates a SRT from a SUP.
+#Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (and keeps original) and it creates at SRT from a SUP.
 #
 #It is tailored to completely max out a CPU (I using a AMD 5950x), just using x264 would only use like 60% so here we are
 #
@@ -254,8 +254,8 @@ Remove-Item -LiteralPath $remuxpath -Force -Recurse -ErrorAction SilentlyContinu
 New-Item -ItemType "directory" -Path $demuxpath -ErrorAction SilentlyContinue | Out-Null
 New-Item -ItemType "directory" -Path $remuxpath -ErrorAction SilentlyContinue | Out-Null
 
-#[string]$mkvSTDOUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
-#[string]$mkvSTDERROUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
+[string]$mkvSTDOUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
+[string]$mkvSTDERROUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
 [string]$AudioExtJson = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".json")
 [string]$STDOUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
 [string]$STDERR_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
@@ -1016,7 +1016,7 @@ function _WrapAudio($file) {
     $global:mkvfile = Get-ChildItem -LiteralPath $mkvfile
 }
 
-function _Normalize($File,$bitrate,$freq,$codec,$audioext) {
+function _Normalize($File,$bitrate,$freq,$codec,$audioext,$ffmpeg) {
 
 $file = Get-Childitem -LiteralPath $file -ErrorAction Stop    
 $remuxpath = $file.fullname.replace(($file.name),"").replace("_demux","_remux")
@@ -1231,10 +1231,9 @@ _DeMuxAll($file)
 Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
 New-Item -ItemType "directory" -Path $temppath -ErrorAction SilentlyContinue | Out-Null
 
-
-
 _CreateVideoIndexFile
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\CreateVideoIndexFile.avs"') -wait -NoNewWindow
+
 
 _getinfo
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\getinfo.avs"') -wait -NoNewWindow
@@ -1246,6 +1245,7 @@ if ($autocrop -eq $true ) {
     _DetectBorders $file
 }
 _job88
+
 
 Start-Process -FilePath $EncodingServer -WindowStyle Minimized
 Start-Sleep -Seconds 1
@@ -1266,11 +1266,10 @@ if ($skipnorm -eq $true) {
 	$audiofile = Get-Childitem -LiteralPath $demuxpath -Include ('*.dts', '*.ac3')
     _WrapAudio $audiofile[0]
     Export-Function -Function _Normalize -OutPath ".\"
-    $procs = $((Start-Process "pwsh" -ArgumentList ('-File .\_Normalize.ps1 "' + $mkvfile + '" "' + $bitrate + '" "' + $freq + '" "' + $codec + '" "' + $audioext + '"')   -PassThru -NoNewWindow) ; (Start-Process -FilePath $SubtitleEdit -ArgumentList ('/convert "' + ($path + '\' + $file.BaseName + '_demux\') + '*.sup" subrip /ocrengine:tesseract /FixCommonErrors /RemoveTextForHI /RedoCasing /FixCommonErrors /FixCommonErrors /outputfolder:"' + $remuxpath) -WorkingDirectory $remuxpath  -PassThru -NoNewWindow); (Start-Process -FilePath $EncodingClient -ArgumentList ('"' + $temppath + '\job88_EncodingClient.meta"')  -PassThru ))
+    $procs = $((Start-Process "pwsh" -ArgumentList ('-File .\_Normalize.ps1 "' + $mkvfile + '" "' + $bitrate + '" "' + $freq + '" "' + $codec + '" "' + $audioext + '" "' + $ffmpeg + '"' )   -PassThru -NoNewWindow) ; (Start-Process -FilePath $SubtitleEdit -ArgumentList ('/convert "' + ($path + '\' + $file.BaseName + '_demux\') + '*.sup" subrip /ocrengine:tesseract /FixCommonErrors /RemoveTextForHI /RedoCasing /FixCommonErrors /FixCommonErrors /outputfolder:"' + $remuxpath) -WorkingDirectory $remuxpath  -PassThru -NoNewWindow); (Start-Process -FilePath $EncodingClient -ArgumentList ('"' + $temppath + '\job88_EncodingClient.meta"')  -PassThru ))
 }
 $procs.WaitForExit()
 $procs | Wait-Process
-Read-Host -Prompt "After skipnorm"
 
 Start-Sleep -Seconds 6
 stop-process -name EncodingServer -Force
