@@ -233,6 +233,59 @@ $SubtitleEdit = "C:\tools\SubtitleEdit\SubtitleEdit.exe" #https://github.com/Sub
 $mediainfo = 'C:\tools\MediaInfo_CLI\MediaInfo.exe' #CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows
 
 ##########################################################################
+#########################Reset Trey#######################################
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+
+public struct RECT {
+  public int left;
+  public int top;
+  public int right;
+  public int bottom;
+}
+
+public class pInvoke {
+  [DllImport("user32.dll")]
+  public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+  [DllImport("user32.dll")]
+  public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+
+  [DllImport("user32.dll")]
+  public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+  [DllImport("user32.dll")]
+  public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+  
+  public static void RefreshTrayArea() {
+    IntPtr systemTrayContainerHandle = FindWindow("Shell_TrayWnd", null);
+    IntPtr systemTrayHandle = FindWindowEx(systemTrayContainerHandle, IntPtr.Zero, "TrayNotifyWnd", null);
+    IntPtr sysPagerHandle = FindWindowEx(systemTrayHandle, IntPtr.Zero, "SysPager", null);
+    IntPtr notificationAreaHandle = FindWindowEx(sysPagerHandle, IntPtr.Zero, "ToolbarWindow32", "Notification Area");
+    if (notificationAreaHandle == IntPtr.Zero) {
+      notificationAreaHandle = FindWindowEx(sysPagerHandle, IntPtr.Zero, "ToolbarWindow32", "User Promoted Notification Area");
+      IntPtr notifyIconOverflowWindowHandle = FindWindow("NotifyIconOverflowWindow", null);
+      IntPtr overflowNotificationAreaHandle = FindWindowEx(notifyIconOverflowWindowHandle, IntPtr.Zero, "ToolbarWindow32", "Overflow Notification Area");
+      RefreshTrayArea(overflowNotificationAreaHandle);
+    }
+    RefreshTrayArea(notificationAreaHandle);
+  }
+
+  private static void RefreshTrayArea(IntPtr windowHandle) {
+    const uint wmMousemove = 0x0200;
+    RECT rect;
+    GetClientRect(windowHandle, out rect);
+    for (var x = 0; x < rect.right; x += 5)
+      for (var y = 0; y < rect.bottom; y += 5)
+        SendMessage(windowHandle, wmMousemove, 0, (y << 16) + x);
+  }
+}
+"@
+#########################Reset Trey#######################################
+
+
 
 $EncodingClient = ($RipBot264PATH + '\EncodingClient.exe')
 $EncodingServer = ($RipBot264PATH + '\EncodingServer.exe')
@@ -643,7 +696,81 @@ $text = @"
 "@
 ##########################################################################
 
+function Set-WindowState {
+    <#
+    .LINK
+    https://gist.github.com/Nora-Ballard/11240204
+    #>
 
+    [CmdletBinding(DefaultParameterSetName = 'InputObject')]
+    param(
+        [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
+        [Object[]] $InputObject,
+
+        [Parameter(Position = 1)]
+        [ValidateSet('FORCEMINIMIZE', 'HIDE', 'MAXIMIZE', 'MINIMIZE', 'RESTORE',
+                     'SHOW', 'SHOWDEFAULT', 'SHOWMAXIMIZED', 'SHOWMINIMIZED',
+                     'SHOWMINNOACTIVE', 'SHOWNA', 'SHOWNOACTIVATE', 'SHOWNORMAL')]
+        [string] $State = 'SHOW',
+        [switch] $SuppressErrors = $false,
+        [switch] $SetForegroundWindow = $false
+    )
+
+    Begin {
+        $WindowStates = @{
+        'FORCEMINIMIZE'         = 11
+            'HIDE'              = 0
+            'MAXIMIZE'          = 3
+            'MINIMIZE'          = 6
+            'RESTORE'           = 9
+            'SHOW'              = 5
+            'SHOWDEFAULT'       = 10
+            'SHOWMAXIMIZED'     = 3
+            'SHOWMINIMIZED'     = 2
+            'SHOWMINNOACTIVE'   = 7
+            'SHOWNA'            = 8
+            'SHOWNOACTIVATE'    = 4
+            'SHOWNORMAL'        = 1
+        }
+
+        $Win32ShowWindowAsync = Add-Type -MemberDefinition @'
+[DllImport("user32.dll")]
+public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+[DllImport("user32.dll", SetLastError = true)]
+public static extern bool SetForegroundWindow(IntPtr hWnd);
+'@ -Name "Win32ShowWindowAsync" -Namespace Win32Functions -PassThru
+
+        if (!$global:MainWindowHandles) {
+            $global:MainWindowHandles = @{ }
+        }
+    }
+
+    Process {
+        foreach ($process in $InputObject) {
+            $handle = $process.MainWindowHandle
+
+            if ($handle -eq 0 -and $global:MainWindowHandles.ContainsKey($process.Id)) {
+                $handle = $global:MainWindowHandles[$process.Id]
+            }
+
+            if ($handle -eq 0) {
+                if (-not $SuppressErrors) {
+                    Write-Error "Main Window handle is '0'"
+                }
+                continue
+            }
+
+            $global:MainWindowHandles[$process.Id] = $handle
+
+            $Win32ShowWindowAsync::ShowWindowAsync($handle, $WindowStates[$State]) | Out-Null
+            if ($SetForegroundWindow) {
+                $Win32ShowWindowAsync::SetForegroundWindow($handle) | Out-Null
+            }
+
+            Write-Verbose ("Set Window State '{1} on '{0}'" -f $MainWindowHandle, $State)
+        }
+    }
+}
 
 function _CreateVideoIndexFile {
     #CreateVideoIndexFile.avs
@@ -1031,6 +1158,7 @@ $file = Get-Childitem -LiteralPath $mkvfile -ErrorAction Stop
 $Source_Path = $file
 $PASS2_FILE = ($remuxpath + $file.name.Replace($file.Extension, $OutputFileExt))
 $PASS2_FILE=$PASS2_FILE -replace 'track\w{1}',"track0"
+
 Write-Output "Starting part 1 of 2 for normalization"
 $ArgumentList = '-progress - -nostats -nostdin -y -i "' + $file + '" -af loudnorm=i=-23.0:lra=7.0:tp=-2.0:offset=0.0:print_format=json -hide_banner -f null -'
 
@@ -1254,9 +1382,12 @@ Start-Sleep -Seconds 1
 Start-Process -FilePath $EncodingServer -WindowStyle Minimized
 Start-Sleep -Seconds 1
 Start-Process -FilePath $EncodingServer -WindowStyle Minimized
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 5
 
-
+$MyProcess = Get-Process -Name "EncodingServer"
+foreach ($ID in $MyProcess) {
+    Get-Process -ID $ID.Id | Set-WindowState -State MINIMIZE
+}
 
 
 if ($skipnorm -eq $true) {
@@ -1268,6 +1399,9 @@ if ($skipnorm -eq $true) {
     Export-Function -Function _Normalize -OutPath ".\"
     $procs = $((Start-Process "pwsh" -ArgumentList ('-File .\_Normalize.ps1 "' + $mkvfile + '" "' + $bitrate + '" "' + $freq + '" "' + $codec + '" "' + $audioext + '" "' + $ffmpeg + '"' )   -PassThru -NoNewWindow) ; (Start-Process -FilePath $SubtitleEdit -ArgumentList ('/convert "' + ($path + '\' + $file.BaseName + '_demux\') + '*.sup" subrip /ocrengine:tesseract /FixCommonErrors /RemoveTextForHI /RedoCasing /FixCommonErrors /FixCommonErrors /outputfolder:"' + $remuxpath) -WorkingDirectory $remuxpath  -PassThru -NoNewWindow); (Start-Process -FilePath $EncodingClient -ArgumentList ('"' + $temppath + '\job88_EncodingClient.meta"')  -PassThru ))
 }
+Start-Sleep -Seconds 3
+$MyProcess = Get-Process -Name "EncodingClient"
+Get-Process -ID $MyProcess.Id | Set-WindowState -State MINIMIZE
 $procs.WaitForExit()
 $procs | Wait-Process
 
@@ -1278,7 +1412,7 @@ if ($onlynorm -eq $false) {
     $AudioList = Get-ChildItem -LiteralPath $demuxpath -Include ("*.aac", "*.ac3", "*.dts", "*.eac3", "*.flac,", "*.mp1", "*.mp2", "*.mp3", "*.ogg") -ErrorAction SilentlyContinue -Force | Sort-Object
     $AudioList | Select-Object -First $Maxaudio | ForEach-Object { Move-Item -LiteralPath $_ -Destination $remuxpath }
 }
-
+[pInvoke]::RefreshTrayArea()
 
 
 _remux
