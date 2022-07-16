@@ -868,7 +868,7 @@ function _job88 {
     #Custom
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Custom')
     if ($addborders -eq $true) {
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
     }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
@@ -889,19 +889,22 @@ function _job88 {
     if ($sh25-eq $true) {
         Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\CAS\CAS.dll")')
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MCAS(video,0.25)')
     }
     if ($sh50-eq $true) {
         Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\CAS\CAS.dll")')
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MCAS(video,0.50)')
     } 
     if ($sh75-eq $true) {
         Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\CAS\CAS.dll")')
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MCAS(video,0.75)')
     } 
     if ($sh100-eq $true) {
@@ -914,23 +917,23 @@ function _job88 {
     #Borders
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Borders')
     if ($s2160-eq $true) {
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
     }
     if ($s1080 -eq $true) {
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
     }
     if ($s720 -eq $true) {
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
     }
     if ($s576 -eq $true) {
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,1.25)')
     }
     if ($s480 -eq $true) {
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,1.5)')
     }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
@@ -1228,6 +1231,8 @@ _DeMuxAll($file)
 Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
 New-Item -ItemType "directory" -Path $temppath -ErrorAction SilentlyContinue | Out-Null
 
+
+
 _CreateVideoIndexFile
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\CreateVideoIndexFile.avs"') -wait -NoNewWindow
 
@@ -1236,7 +1241,6 @@ Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\getinfo.a
 
 $fps = Get-Content ($temppath + "\info.txt") -First 1
 _job88_EncodingClient $File
-
 
 if ($autocrop -eq $true ) {
     _DetectBorders $file
@@ -1279,7 +1283,7 @@ if ($onlynorm -eq $false) {
 
 
 _remux
-#Remove-Item -LiteralPath $demuxpath -Force -Recurse -ErrorAction SilentlyContinue
-#Remove-Item -LiteralPath $remuxpath -Force -Recurse -ErrorAction SilentlyContinue
-#Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $demuxpath -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $remuxpath -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath ".\_Normalize.ps1" -Force -Recurse -ErrorAction SilentlyContinue
