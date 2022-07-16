@@ -75,13 +75,13 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
 ######      Degrain  
 
 - ​      `-mdegrain1 400` [Denoise using MDegrain1, they value is for strength 100-800]  
-- ​      `-mdegrain2 400` [Denoise using MDegrain1, they value is for strength 100-800]  
-- ​      `-mdegrain3 400` [Denoise using MDegrain1, they value is for strength 100-800]  
+- ​      `-mdegrain2 400` [Denoise using MDegrain2, they value is for strength 100-800]  
+- ​      `-mdegrain3 400` [Denoise using MDegrain3, they value is for strength 100-800]  
 
 ######      Deinterlace  
 
 - ​      `-IT` [Inverse Telecine]  
 - ​      `-dBFF1x` [BFF keep same frame rate]  
-- ​	  `-dBFF2x` [BFF double frame rate]  
+- ​      `-dBFF2x` [BFF double frame rate]  
 - ​      `-dTFF1x` [TFF keep same frame rate]  
 - ​      `-dTFF2x` [TFF double frame rate]  
