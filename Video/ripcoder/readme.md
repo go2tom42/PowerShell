@@ -2,16 +2,14 @@
 
 #### A Powershell script stealing everything it can from RipBot264
 
-
+Runs on Powershell 7, might work on Powershell 5 never tried, to try change on line 1276 "pwsh" to "powershell"
 
 Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (EBU R128 loudness plus keeps original) and it creates at SRT from a SUP.
 
 It is tailored to completely max out a CPU (I using a AMD 5950x), just using x264 would only use like 60% so here we are
 
 **Requirements** 
-
 - RipBot264v1.26.0 https://forum.doom9.org/showthread.php?t=127611  
-
 - Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases  
 - MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows  
 
