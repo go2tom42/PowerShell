@@ -79,9 +79,9 @@ It is tailored to completely max out a CPU (I using a AMD 5950x), just using x26
 
 ######      Degrain  
 
-- ​      `-mdegrain1 400` [Denoise using MDegrain1, they value is for strength 100-800]  
-- ​      `-mdegrain2 400` [Denoise using MDegrain2, they value is for strength 100-800]  
-- ​      `-mdegrain3 400` [Denoise using MDegrain3, they value is for strength 100-800]  
+- ​      `-mdegrain1 400` [Denoise using MDegrain1, the value is for strength 100-800]  
+- ​      `-mdegrain2 400` [Denoise using MDegrain2, the value is for strength 100-800]  
+- ​      `-mdegrain3 400` [Denoise using MDegrain3, the value is for strength 100-800]  
 
 ######      Deinterlace  
 
