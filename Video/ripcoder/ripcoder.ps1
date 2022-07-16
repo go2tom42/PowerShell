@@ -1,36 +1,96 @@
-# Requirements 
+## RIPCODER
 #
-# RipBot264v1.26.0 https://forum.doom9.org/showthread.php?t=127611
-# Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases
-# MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows
+##### A Powershell script stealing everything it can from RipBot264
 #
-# SET 3 VARIBLES BELOW, SEE LINE 34
+#Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (and keeps original) and it creates at SRT from a SUP.
 #
-# Options
-# -File [Path to file]
-# Audio normalizion Options
-#  -codec [Audio for normailzed file, ac3 is default]
-#  -audioext [File extention for selected codec, ac3 is default]
-#  -bitrate [Audio file bitrate, 192k is default]
-#  -freq [Audio file frequency , 48000 is default]
-#  -skipnorm [Don't normalize audio]
-#  -onlynorm [only include normalized audio file]
-#  -Maxaudio [Total number of audio files to include in final video, 9 is default)
+#It is tailored to completely max out a CPU (I using a AMD 5950x), just using x264 would only use like 60% so here we are
 #
-# Video Options
-#  -crf [Constant Rate Factor, range 0 to 51, default is 20 ]
-#  -level [Options 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2, 4.0, 4.1, 4.2, 5.0, & 5.1. Default is 4.0]
-#  -preset [Options ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, & placebo. Default is veryslow]
-#  -myprofile [Options baseline, main, & high. Default is high]
-#  -tune [Options none, film, animation, grain, stillimage, psnr, ssim, fastdecode, & zerolatency. Default is none]
-#  -s720 [Resize to 720p] 
-#  -autocrop [Audio crop black bars]
+#**Requirements** 
+#
+#  RipBot264v1.26.0 https://forum.doom9.org/showthread.php?t=127611  
+#  Subtitle Edit https://github.com/SubtitleEdit/subtitleedit/releases  
+#  MediaInfo CLI VERSION https://mediaarea.net/en/MediaInfo/Download/Windows  
+#
+# YOU NEED TO SET 3 VARIABLES, SEE LINE 229 in script
+#
+# **Basic Usage**
+#
+# ripcoder file [Path to file] 
+#
+##### Main Options  
+#
+######  Audio normalizion Options  
+#
+#      -codec ac3 [Audio for normalized file, **ac3** is default]
+#      -audioext ac3 [File extension for selected codec, **ac3** is default]
+#      -bitrate 192k [Audio file bitrate, **192k** is default]
+#      -freq 48000 [Audio file frequency , **48000** is default]
+#
+######  Video Options  
+#
+#      -crf 20 [Constant Rate Factor, range 0 to 51, default is **20** ]  
+#      -level 4.0 [Options 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2, 4.0, 4.1, 4.2, 5.0, & 5.1. Default is **4.0**]  
+#      -preset veryslow [Options ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, & placebo. Default is **veryslow**]  
+#      -myprofile high [Options baseline, main, & high. Default is **high**]  
+#      -tune none [Options none, film, animation, grain, stillimage, psnr, ssim, fastdecode, & zerolatency. Default is **none**]  
+#
+######  Extra Options  
+#
+######  Resizing  
+#
+#      -s2160 [Resize to 2160p]  
+#      -s1080 [Resize to 1080p]   
+#      -s720 [Resize to 720p]  
+#      -s576 [Resize to 576p]  
+#      -s480 [Resize to 480p]   
+#
+#######   Cropping  
+#
+#      -autocrop [Audio crop black bars]  
+#      -crop 'left,top,right,bottom' [Number of pixels to remove from listed direction, must be power of 2 (0 2 4 6 8 10 etc) (EX -crop '265,2,265,0'  )]  
+#
+#######   Audio  
+#
+#      -skipnorm [Don't normalize audio]  
+#      -onlynorm [only include normalized audio file, main audio track removed]  
+#      -Maxaudio [Total number of audio files to include in final video, 9 is default)  
+#
+#######   Color Convertion   
+#
+#      -LPC [TV -> PC]  
+#      -LTV [PC -> TV]  
+#      -colors 'hue,sat,bright,cont' [Hue -180 to 180 Whole Numbers, sat 0 to 2 by tenths,bright -255 to 255 Whole Numbers,cont  0 to 2 by tenths (EX -crop '265,2,265,0' )]  
+#
+#######   Video Enhancements  
+#
+#      -decimate [decimate 29.97 to 23.976]  
+#      -tonemap [Kepp HDR tone map]  
+#      -addborders [Auto Borders for 16/9]  
+#      -interlace [Interlaces video (why?)]  
+#
+#######      Sharpen  
+#
+#      -sh25 [Sharpen 25%]  
+#      -sh50 [Sharpen 50%]  
+#      -sh75 [Sharpen 75%]  
+#      -sh100 [Sharpen 100%]  
+#
+#######      Degrain  
+#
+#      -mdegrain1 400 [Denoise using MDegrain1, they value is for strength 100-800]  
+#      -mdegrain2 400 [Denoise using MDegrain2, they value is for strength 100-800]  
+#      -mdegrain3 400 [Denoise using MDegrain3, they value is for strength 100-800]  
+#
+#######      Deinterlace  
+#
+#      -IT [Inverse Telecine]  
+#      -dBFF1x [BFF keep same frame rate]  
+#      -dBFF2x [BFF double frame rate]  
+#      -dTFF1x [TFF keep same frame rate]  
+#      -dTFF2x [TFF double frame rate]  
 # Examples
 #  ripcoder "C:\Vi deo\P&R\s02e15.mkv" -crf 16 -preset veryslow -profile main
-#
-#
-#
-#
 #
 Param(
     [parameter(Mandatory = $true)]
@@ -63,6 +123,54 @@ Param(
     [Int64]$Maxaudio = 9,
     [parameter(Mandatory = $false)]
     [Switch]$s720 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$LPC = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$LTV = $false,
+    [parameter(Mandatory = $false)]
+    [String]$colors = $false,
+    [parameter(Mandatory = $false)]
+    [String]$crop = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$IT = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$s2160 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$s1080 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$s576 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$s480 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$tonemap = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$sh25 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$sh50 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$sh75 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$sh100 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$Decimate = $false,
+    [parameter(Mandatory = $false)]
+    [String]$mdegrain1 = $false,
+    [parameter(Mandatory = $false)]
+    [String]$mdegrain2 = $false,
+    [parameter(Mandatory = $false)]
+    [String]$mdegrain3 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$addborders = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$interlace = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$dBFF2x = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$dBFF1x = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$dTFF2x = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$dTFF1x = $false,
     [parameter(Mandatory = $false)]
     [Switch]$autocrop = $false
 )
@@ -134,6 +242,9 @@ $ffprobe = ($RipBot264PATH + '\Tools\ffmpeg\bin\ffprobe.exe')
 $ffmpeg = ($RipBot264PATH + '\Tools\ffmpeg\bin\ffmpeg.exe')
 $detectcrop = ($RipBot264PATH + '\Tools\DetectBorders\DetectBorders.exe')
 $temppath = "c:\Temp\RipBot264temp\job88"
+$mkvmerge = ($RipBot264PATH + '\Tools\mkvtoolnix\mkvmerge.exe')
+$mkvextract = ($RipBot264PATH + '\Tools\mkvtoolnix\mkvextract.exe')
+
 $demuxpath = ($path + '\' + $file.BaseName + '_demux\')
 $remuxpath = ($path + '\' + $file.BaseName + '_remux\')
 $basename = $file.BaseName
@@ -143,8 +254,8 @@ Remove-Item -LiteralPath $remuxpath -Force -Recurse -ErrorAction SilentlyContinu
 New-Item -ItemType "directory" -Path $demuxpath -ErrorAction SilentlyContinue | Out-Null
 New-Item -ItemType "directory" -Path $remuxpath -ErrorAction SilentlyContinue | Out-Null
 
-[string]$mkvSTDOUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
-[string]$mkvSTDERROUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
+#[string]$mkvSTDOUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
+#[string]$mkvSTDERROUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
 [string]$AudioExtJson = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".json")
 [string]$STDOUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
 [string]$STDERR_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
@@ -582,72 +693,273 @@ function _job88 {
     Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\lsmash\LSMASHSource.dll")')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('video=LWLibavVideoSource("' + $file + '",cachefile="' + $temppath + '\' + $File.basename + $file.Extension + '.lwi")')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Deinterlace
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Deinterlace')
+    if ($dBFF2x -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\RgTools\RgTools.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\nnedi3\nnedi3.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\masktools\masktools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\mvtools\mvtools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadCPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Yadif\Yadif.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\QTGMC.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AssumeBFF(video).QTGMC(Preset="Medium",FPSDivisor=1)')
+    }
+    if ($dBFF1x -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\RgTools\RgTools.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\nnedi3\nnedi3.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\masktools\masktools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\mvtools\mvtools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadCPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Yadif\Yadif.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\QTGMC.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AssumeBFF(video).QTGMC(Preset="Medium",FPSDivisor=2)')
+    }
+    if ($dTFF2x -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\RgTools\RgTools.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\nnedi3\nnedi3.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\masktools\masktools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\mvtools\mvtools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadCPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Yadif\Yadif.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\QTGMC.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AssumeTFF(video).QTGMC(Preset="Medium",FPSDivisor=1)')
+    }
+    if ($dTFF1x -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\RgTools\RgTools.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\nnedi3\nnedi3.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\masktools\masktools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\mvtools\mvtools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadCPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Yadif\Yadif.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\QTGMC.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AssumeTFF(video).QTGMC(Preset="Medium",FPSDivisor=2)')
+    }
+    if ($IT -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\TIVTC\TIVTC.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=tfm(video,order=1)')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Decimate
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Decimate')
+    if ($IT -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\TIVTC\TIVTC.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=TDecimate(video)')
+    }
+    if ($Decimate-eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\TIVTC\TIVTC.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=TDecimate(video)')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Crop
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Crop')
     if (Test-Path -LiteralPath $file.FullName.Replace($file.Extension , '.crop')) {
-        $crop = Get-Content $file.FullName.Replace($file.Extension , '.crop') -First 1
+        $cropit = Get-Content $file.FullName.Replace($file.Extension , '.crop') -First 1
         $regex = [regex]"\((.*)\)"
-        $crop = [regex]::match($crop, $regex).Groups[1]
-        $crop = $crop.Value
-        Add-Content -Path ($temppath + "\job88.avs") -Value (('video=Crop(video,' + $crop + ')'))
+        $cropit = [regex]::match($cropit, $regex).Groups[1]
+        $cropit = $cropit.Value
+        Add-Content -Path ($temppath + "\job88.avs") -Value (('video=Crop(video,' + $cropit + ')'))
         Remove-Item -LiteralPath ($file.FullName.Replace($file.Extension , '.crop')) -Force -Recurse -ErrorAction SilentlyContinue
     } else {
         Add-Content -Path ($temppath + "\job88.avs") -Value ('')    
     }
-        Add-Content -Path ($temppath + "\job88.avs") -Value ('#Downscale')
+    if ($crop -ne $false) {
+        $cropBreakdown = $crop.Split(",")
+        if ($cropBreakdown.Length -ne 4) {
+            Write-Output "improper use of -crop"
+            Exit
+        }
+        Add-Content -Path ($temppath + "\job88.avs") -Value ("video=Crop(video,$cropBreakdown[0],$cropBreakdown[1],-$cropBreakdown[2],-$cropBreakdown[3])")
+    } else {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    }
+    #Resize
+     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Resize')
+    if ($s2160-eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=Spline64ResizeMT(video,3840,2160)')
+    }
+    if ($s1080 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=Spline64ResizeMT(video,1920,1080)')
+    }
     if ($s720 -eq $true) {
         Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
         Add-Content -Path ($temppath + "\job88.avs") -Value ('video=Spline64ResizeMT(video,1280,720)')
     }
+    if ($s576 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=Spline64ResizeMT(video,720,576)')
+    }
+    if ($s480 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=Spline64ResizeMT(video,720,480)')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Tonemap
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Tonemap')
+    if ($Tonemap -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\HDRTools\hdrtools.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\HDRtoSDR.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=HDRtoSDR(video,"PQ")')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Levels
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Levels')
-    Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    if ($LPC -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=Levels(video,16, 1, 235, 0, 255, coring=false)')
+    } else {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    }
+    if ($LTV -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=Levels(video,0, 1, 255, 16, 235, coring=false)')
+    } else {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    }
+    #Colours
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Colours')
-    Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    if ($colors -ne $false) {
+        $colorsBreakdown = $colors.Split(",")
+        if ($colorsBreakdown.Length -ne 4) {
+            Write-Output "improper use of -colors"
+            Exit
+        }
+        if ($colorsBreakdown[0] -as [int] -gt 180) { $colorsBreakdown[0] = "180"}
+        if ($colorsBreakdown[0] -as [int] -lt -180) { $colorsBreakdown[0] = "-180"}
+    
+        if ($colorsBreakdown[1] -as [int] -gt 2) { $colorsBreakdown[1] = "2"}
+        if ($colorsBreakdown[1] -as [int] -lt 0) { $colorsBreakdown[1] = "0"}
+    
+        if ($colorsBreakdown[2] -as [int] -gt 255) { $colorsBreakdown[2] = "255"}
+        if ($colorsBreakdown[2] -as [int] -lt -255) { $colorsBreakdown[2] = "-255"}
+    
+        if ($colorsBreakdown[3] -as [int] -gt 2) { $colorsBreakdown[3] = "2"}
+        if ($colorsBreakdown[3] -as [int] -lt 0) { $colorsBreakdown[3] = "0"}
+        Add-Content -Path ($temppath + "\job88.avs") -Value ("video=Tweak(video,hue=$colorsBreakdown[0],sat=$colorsBreakdown[1],bright=$colorsBreakdown[2],cont=$colorsBreakdown[3]")
+    } else {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    }
+    #Denoise
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Denoise')
+    if ($mdegrain1 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\mvtools\mvtools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('super=MSuper(video,pel=2)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('fv1=MAnalyse(super,isb=false,delta=1,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('bv1=MAnalyse(super,isb=true,delta=1,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MDegrain1(video,super,bv1,fv1,thSAD=' + $mdegrain1 + ')')
+    }
+    if ($mdegrain2 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\mvtools\mvtools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('super=MSuper(video,pel=2)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('fv1=MAnalyse(super,isb=false,delta=1,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('bv1=MAnalyse(super,isb=true,delta=1,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('fv2=MAnalyse(super,isb=false,delta=2,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('bv2=MAnalyse(super,isb=true,delta=2,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MDegrain2(video,super,bv1,fv1,bv2,fv2,thSAD=' + $mdegrain1 + ')')
+    }
+    if ($mdegrain3 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\mvtools\mvtools2.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('super=MSuper(video,pel=2)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('fv1=MAnalyse(super,isb=false,delta=1,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('bv1=MAnalyse(super,isb=true,delta=1,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('fv2=MAnalyse(super,isb=false,delta=2,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('bv2=MAnalyse(super,isb=true,delta=2,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('fv3=MAnalyse(super,isb=false,delta=3,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('bv3=MAnalyse(super,isb=true,delta=3,overlap=4)')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MDegrain3(video,super,bv1,fv1,bv2,fv2,bv3,fv3,thSAD=' + $mdegrain1 + ')')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Custom
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Custom')
+    if ($addborders -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Prefetch
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Prefetch')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #After_Prefetch_Denoise
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#After_Prefetch_Denoise')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #After_Prefetch_Custom
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#After_Prefetch_Custom')
+    if ($interlace -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AssumeFrameBased(video).AssumeTFF.SeparateFields.SelectEvery(4, 0, 3).Weave')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Sharpen
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+    if ($sh25-eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\CAS\CAS.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MCAS(video,0.25)')
+    }
+    if ($sh50-eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\CAS\CAS.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MCAS(video,0.50)')
+    } 
+    if ($sh75-eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\CAS\CAS.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MCAS(video,0.75)')
+    } 
+    if ($sh100-eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Plugins_JPSDR\Plugins_JPSDR.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\CAS\CAS.dll")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('Import("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\MCAS.avs")')    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Sharpen')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=MCAS(video,1.0)')
+    }   
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
-    Add-Content -Path ($temppath + "\job88.avs") -Value ('#Upscale')
-    Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Borders
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Borders')
+    if ($s2160-eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
+    }
+    if ($s1080 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
+    }
+    if ($s720 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,16.0/9.0)')
+    }
+    if ($s576 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,1.25)')
+    }
+    if ($s480 -eq $true) {
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('LoadPlugin("' + $RipBot264PATH + '\Tools\AviSynth plugins\Scripts\AutoBorders.avs")')
+        Add-Content -Path ($temppath + "\job88.avs") -Value ('video=AutoBorders(video,1.5)')
+    }
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Subtitles
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Subtitles')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #AudioSource
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#AudioSource')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Triming
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Triming')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #AVSameLength
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#AVSameLength')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #ColorSpace
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#ColorSpace')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('')
+    #Return
     Add-Content -Path ($temppath + "\job88.avs") -Value ('#Return')
     Add-Content -Path ($temppath + "\job88.avs") -Value ('return video') 
  }
 
  function _DeMuxAll($file) {
     $file = Get-Childitem -LiteralPath $file -ErrorAction Stop
-    $Global:framerate = &ffprobe -i $file -v error -select_streams v -of default=noprint_wrappers=1:nokey=1 -show_entries stream=r_frame_rate
+    $Global:framerate = &$ffprobe -i $file -v error -select_streams v -of default=noprint_wrappers=1:nokey=1 -show_entries stream=r_frame_rate
     #get --identify from mkvmerge for all tracks
-    $videoMKVinfo = &mkvmerge --ui-language en --identify  --identification-format json "$file" | ConvertFrom-Json
-
+    $videoMKVinfo = &$mkvmerge --ui-language en --identify  --identification-format json "$file" | ConvertFrom-Json
     $ChapCheck = $videoMKVinfo.chapters.count -gt 0
-
-    #$videoMKVinfo = (&mkvmerge --ui-language en --identify  --identification-format json "$file" | ConvertFrom-Json).tracks
     $videoMKVinfo = $videoMKVinfo.tracks
 
     #load Xml that gets extension for a codecID
@@ -659,15 +971,8 @@ function _job88 {
 
     $commandline = '"' + $file + '"  tracks --ui-language en  '
 
-    
-    #New-Item -ItemType "directory" -Path ((Get-Location).path + '\audio') -ErrorAction SilentlyContinue | Out-Null
-    #New-Item -ItemType "directory" -Path ((Get-Location).path + '\subtitles') -ErrorAction SilentlyContinue | Out-Null
-
-
     for ($i = 0; $i -lt $NumberOfTracks; $i++) {
         $lang = ($videoMKVinfo | Where-Object id -eq $i).properties.language
-
-
         if ((($videoMKVinfo | Where-Object id -eq $i).properties.codec_id).Substring(0, 1) -eq 'A') {
             $delay = (($videoMKVinfo | Where-Object id -eq $i).properties.minimum_timestamp) / 1000000
             if ($SkipA -eq 'True') {
@@ -676,7 +981,6 @@ function _job88 {
                 $commandline = $commandline + $i + ':"' + $demuxpath + $file.BaseName + '_track' + $i + '_[' + $lang + ']' + '_DELAY ' + $delay + 'ms.' + ($codecIDs | Where-Object { $_.id -eq (($videoMKVinfo | Where-Object id -eq $i).properties.codec_id) }).ext + '" '
             }
         }
-
         if ((($videoMKVinfo | Where-Object id -eq $i).properties.codec_id).Substring(0, 1) -eq 'S') {
             if ($SkipS -eq 'True') {
                 $commandline = $commandline
@@ -686,11 +990,11 @@ function _job88 {
         }
     }
 
-    Start-Process -FilePath "mkvextract" -ArgumentList $commandline -wait -NoNewWindow #-RedirectStandardError nul
+    Start-Process -FilePath $mkvextract -ArgumentList $commandline -wait -NoNewWindow #-RedirectStandardError nul
 
    if ($ChapCheck -eq 'True') {
         #New-Item -ItemType "directory" -Path ((Get-Location).path + '\chapters') -ErrorAction SilentlyContinue | Out-Null
-        Start-Process -FilePath "mkvextract" -ArgumentList ('"' + $file + '" chapters --ui-language en --simple "' + $remuxpath + $file.BaseName + '_chapters.txt"') -wait -NoNewWindow #-RedirectStandardError nul
+        Start-Process -FilePath $mkvextract -ArgumentList ('"' + $file + '" chapters --ui-language en --simple "' + $remuxpath + $file.BaseName + '_chapters.txt"') -wait -NoNewWindow #-RedirectStandardError nul
    }
 
 }
@@ -704,7 +1008,7 @@ function _WrapAudio($file) {
     $json = $json += $file.FullName
     $json = $json += ")"
     $json | ConvertTo-Json -depth 100 | Out-File "$AudioExtJson"
-    Start-Process -FilePath "mkvmerge" -ArgumentList ('"' + "@$AudioExtJson" + '"') -wait -NoNewWindow #-RedirectStandardError nul
+    Start-Process -FilePath $mkvmerge -ArgumentList ('"' + "@$AudioExtJson" + '"') -wait -NoNewWindow #-RedirectStandardError nul
     $global:mkvfile = $file.FullName.Replace($file.Extension , '.mkv')
     $global:mkvfile = Get-ChildItem -LiteralPath $mkvfile
 }
@@ -724,10 +1028,10 @@ $file = Get-Childitem -LiteralPath $mkvfile -ErrorAction Stop
 $Source_Path = $file
 $PASS2_FILE = ($remuxpath + $file.name.Replace($file.Extension, $OutputFileExt))
 
-Echo "Starting part 1 of 2 for normalization"
+Write-Output "Starting part 1 of 2 for normalization"
 $ArgumentList = '-progress - -nostats -nostdin -y -i "' + $file + '" -af loudnorm=i=-23.0:lra=7.0:tp=-2.0:offset=0.0:print_format=json -hide_banner -f null -'
 
-$ffmpeg = Start-Process ffmpeg -ArgumentList $ArgumentList -RedirectStandardError $STDERR_FILE -RedirectStandardOutput $STDOUT_FILE -Wait -NoNewWindow
+$ffmpeg_do = Start-Process $ffmpeg -ArgumentList $ArgumentList -RedirectStandardError $STDERR_FILE -RedirectStandardOutput $STDOUT_FILE -Wait -NoNewWindow
 
 $input_i = (((Get-Content -LiteralPath $STDERR_FILE | Where-Object { $_ -Like '*input_i*' }).Split(" "))[2]).Replace('"', "").Replace(',', "")
 $input_tp = (((Get-Content -LiteralPath $STDERR_FILE | Where-Object { $_ -Like '*input_tp*' }).Split(" "))[2]).Replace('"', "").Replace(',', "")
@@ -737,13 +1041,13 @@ $target_offset = (((Get-Content -LiteralPath $STDERR_FILE | Where-Object { $_ -L
 
 $ArgumentList = ('-progress - -nostats -nostdin -y -i "' + $Source_Path + '" -threads 0 -hide_banner -filter_complex "[0:0]loudnorm=I=-23:TP=-2.0:LRA=7:measured_I=' + $input_i + ':measured_LRA=' + $input_lra + ':measured_TP=' + $input_tp + ':measured_thresh=' + $input_thresh + ':offset=' + $target_offset + ':linear=true:print_format=json[norm0]" -map_metadata 0 -map_metadata:s:a:0 0:s:a:0 -map_chapters 0 -c:v copy -map [norm0] -c:a ' + $codec + ' -b:a ' + $bitrate + ' -ar ' + $freq +' -c:s copy -ac 2 "' + $PASS2_FILE + '"')
 
-Echo "Starting part 2 of 2 for normalization"
+Write-Output "Starting part 2 of 2 for normalization"
 
-$ffmpeg = Start-Process ffmpeg -ArgumentList $ArgumentList -Wait -NoNewWindow -RedirectStandardError $STDERR_FILE -RedirectStandardOutput $STDOUT_FILE
+$ffmpeg_do = Start-Process $ffmpeg -ArgumentList $ArgumentList -Wait -NoNewWindow -RedirectStandardError $STDERR_FILE -RedirectStandardOutput $STDOUT_FILE
 
 Remove-Item -Path $mkvfile
 
-Echo "Ending part 2 of 2 for normalization"
+Write-Output "Ending part 2 of 2 for normalization"
 
 }
 
@@ -837,7 +1141,7 @@ function _remux {
         if ($defaultduration -eq "24.000") {$defaultduration = "24p"}
 
         $MyPath = $path
-        $mediainfo = 'C:\Program Files\MKVToolNix\mkvmerge.exe'
+
         
         $VideoList = Get-ChildItem -LiteralPath ($temppath + '\video.264') -ErrorAction SilentlyContinue -Force | Sort-Object
         foreach ($file in $VideoList) {
@@ -874,7 +1178,7 @@ function _remux {
             $epChapter = $ChapterList | Where-Object { $_.CoreName -eq ($file.CoreName) }
             
             if (Test-Path -LiteralPath ($MyPath + "\" + $file.CoreName + ".mkv")) {
-                $4rand = -join ((48..57) + (97..122) | Get-Random -Count 4 | % {[char]$_}) #random string
+                $4rand = -join ((48..57) + (97..122) | Get-Random -Count 4 | ForEach-Object {[char]$_}) #random string
                 $NewName = $MyPath + "\" + $file.CoreName + "_" + $4rand + ".mkv"
             } else {
                 $NewName = $MyPath + "\" + $file.CoreName + ".mkv"
@@ -910,7 +1214,7 @@ function _remux {
             $json = $json += "--track-order", "0:0,1:0$tracks"
             #"$($MyPath)\$($file.corename).json"
             $json | ConvertTo-Json -depth 100 | Out-File -LiteralPath $ExtJson
-            Start-Process -FilePath $mediainfo -ArgumentList ('"' + "@$($ExtJson)" + '"') -wait -NoNewWindow #-RedirectStandardError nul
+            Start-Process -FilePath $mkvmerge -ArgumentList ('"' + "@$($ExtJson)" + '"') -wait -NoNewWindow #-RedirectStandardError nul
             Remove-Item -LiteralPath $ExtJson
         }
         ################need to add basename to a add-member -NotePropertyName Lang -NotePropertyValue und}    
@@ -924,22 +1228,28 @@ _DeMuxAll($file)
 Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
 New-Item -ItemType "directory" -Path $temppath -ErrorAction SilentlyContinue | Out-Null
 
+Read-Host -Prompt "After _demux"
+
 _CreateVideoIndexFile
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\CreateVideoIndexFile.avs"') -wait -NoNewWindow
 
+Read-Host -Prompt "After _CreateVideoIndexFile"
 
 _getinfo
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\getinfo.avs"') -wait -NoNewWindow
 
+Read-Host -Prompt "After _getinfo"
 
 $fps = Get-Content ($temppath + "\info.txt") -First 1
 _job88_EncodingClient $File
+Read-Host -Prompt "After _job88_EncodingClient"
+
 if ($autocrop -eq $true ) {
     _DetectBorders $file
 }
 _job88
 
-
+Read-Host -Prompt "After _job88"
 
 Start-Process -FilePath $EncodingServer -WindowStyle Minimized
 Start-Sleep -Seconds 1
@@ -950,19 +1260,22 @@ Start-Sleep -Seconds 1
 Start-Process -FilePath $EncodingServer -WindowStyle Minimized
 Start-Sleep -Seconds 10
 
-$audiofile = Get-Childitem -LiteralPath $demuxpath -Include ('*.dts', '*.ac3')
-_WrapAudio $audiofile[0]
+
 
 
 if ($skipnorm -eq $true) {
     $procs = $((Start-Process -FilePath $SubtitleEdit -ArgumentList ('/convert "' + ($path + '\' + $file.BaseName + '_demux\') + '*.sup" subrip /ocrengine:tesseract /FixCommonErrors /RemoveTextForHI /RedoCasing /FixCommonErrors /FixCommonErrors /outputfolder:"' + $remuxpath) -WorkingDirectory $remuxpath  -PassThru -NoNewWindow); (Start-Process -FilePath $EncodingClient -ArgumentList ('"' + $temppath + '\job88_EncodingClient.meta"')  -PassThru ))
     
 } else {
+	$audiofile = Get-Childitem -LiteralPath $demuxpath -Include ('*.dts', '*.ac3')
+    _WrapAudio $audiofile[0]
     Export-Function -Function _Normalize -OutPath ".\"
     $procs = $((Start-Process "pwsh" -ArgumentList ('-File .\_Normalize.ps1 "' + $mkvfile + '" "' + $bitrate + '" "' + $freq + '" "' + $codec + '" "' + $audioext + '"')   -PassThru -NoNewWindow) ; (Start-Process -FilePath $SubtitleEdit -ArgumentList ('/convert "' + ($path + '\' + $file.BaseName + '_demux\') + '*.sup" subrip /ocrengine:tesseract /FixCommonErrors /RemoveTextForHI /RedoCasing /FixCommonErrors /FixCommonErrors /outputfolder:"' + $remuxpath) -WorkingDirectory $remuxpath  -PassThru -NoNewWindow); (Start-Process -FilePath $EncodingClient -ArgumentList ('"' + $temppath + '\job88_EncodingClient.meta"')  -PassThru ))
 }
 $procs.WaitForExit()
 $procs | Wait-Process
+Read-Host -Prompt "After skipnorm"
+
 Start-Sleep -Seconds 6
 stop-process -name EncodingServer -Force
 
@@ -974,8 +1287,7 @@ if ($onlynorm -eq $false) {
 
 
 _remux
-Remove-Item -LiteralPath $demuxpath -Force -Recurse -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath $remuxpath -Force -Recurse -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
+#Remove-Item -LiteralPath $demuxpath -Force -Recurse -ErrorAction SilentlyContinue
+#Remove-Item -LiteralPath $remuxpath -Force -Recurse -ErrorAction SilentlyContinue
+#Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath ".\_Normalize.ps1" -Force -Recurse -ErrorAction SilentlyContinue
-
