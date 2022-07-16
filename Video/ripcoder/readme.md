@@ -11,7 +11,7 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
  YOU NEED TO SET 3 VARIABLES, SEE LINE 121 in script
 
  **Usage**
- ```
+
  -File [Path to file] 
  #### Main Options  
 
