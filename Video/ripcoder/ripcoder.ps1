@@ -2,7 +2,7 @@
 #
 ##### A Powershell script stealing everything it can from RipBot264
 #
-#Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (and keeps original) and it creates at SRT from a SUP.
+#End goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles like it normalizes the main audio file (and keeps original) and it creates a SRT from a SUP.
 #
 #It is tailored to completely max out a CPU (I using a AMD 5950x), just using x264 would only use like 60% so here we are
 #
