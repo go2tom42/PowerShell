@@ -1030,7 +1030,7 @@ $file = Get-Childitem -LiteralPath $mkvfile -ErrorAction Stop
 
 $Source_Path = $file
 $PASS2_FILE = ($remuxpath + $file.name.Replace($file.Extension, $OutputFileExt))
-
+$PASS2_FILE=$PASS2_FILE -replace 'track\w{1}',"track0"
 Write-Output "Starting part 1 of 2 for normalization"
 $ArgumentList = '-progress - -nostats -nostdin -y -i "' + $file + '" -af loudnorm=i=-23.0:lra=7.0:tp=-2.0:offset=0.0:print_format=json -hide_banner -f null -'
 
