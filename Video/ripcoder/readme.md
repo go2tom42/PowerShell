@@ -58,8 +58,6 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
 -    `-LTV` [PC -> TV]  
 -    `-colors 'hue,sat,bright,cont'` [Hue -180 to 180 Whole Numbers, sat 0 to 2 by tenths,bright -255 to 255 Whole Numbers,cont  0 to 2 by tenths (EX -crop '265,2,265,0' )]  
 
-​      
-
 ######   Video Enhancements  
 
 -    `-decimate` [decimate 29.97 to 23.976]  
