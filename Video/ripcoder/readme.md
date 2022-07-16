@@ -26,7 +26,7 @@ Ends goal gives RipBot264 GUI a CLI interface, plus a few bells and whistles lik
 
   `-crf 20` [Constant Rate Factor, range 0 to 51, default is 20 ]  
   `-level 4.0` [Options 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 3.0, 3.1, 3.2, 4.0, 4.1, 4.2, 5.0, & 5.1. Default is 4.0]  
-  `-preset veryslow` [Options ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, & placebo. Default is veryslow]  
+  `-profile veryslow` [Options ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, & placebo. Default is veryslow]  
   `-myprofile high` [Options baseline, main, & high. Default is high]  
   `-tune none` [Options none, film, animation, grain, stillimage, psnr, ssim, fastdecode, & zerolatency. Default is none]  
 
