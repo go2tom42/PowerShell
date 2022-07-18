@@ -52,6 +52,7 @@ It is tailored to completely max out a CPU (I using a AMD 5950x), just using x26
 -    `-crop` 'left,top,right,bottom' [Number of pixels to remove from listed direction, must be power of 2 (0 2 4 6 8 10 etc) (EX -crop '265,2,265,0'  )]  
 
 ######   Aspect Ratio Override 
+
       This script pulls the Aspect Ratio & Resulution (cropping is taken into account) from the source and then calculates SAR, 
       if it within 5% of 1:1 it goes with 1:1.  You can override the Aspect Ratio, if you are doing DVDs with this (WHY?) use the override
       
