@@ -103,3 +103,7 @@ This script pulls the Aspect Ratio & Resulution (cropping is taken into account)
 - ​      `-dBFF2x` [BFF double frame rate]  
 - ​      `-dTFF1x` [TFF keep same frame rate]  
 - ​      `-dTFF2x` [TFF double frame rate]  
+
+**To Do List** 
+- Add x265 support
+- More Error Checking
