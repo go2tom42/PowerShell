@@ -56,14 +56,14 @@ It is tailored to completely max out a CPU (I using a AMD 5950x), just using x26
       This script pulls the Aspect Ratio & Resulution (cropping is taken into account) from the source and then calculates SAR, 
       if it within 5% of 1:1 it goes with 1:1.  You can override the Aspect Ratio, if you are doing DVDs with this (WHY?) use the override
       
--    `-ar43  4:3 TV
--    `-ar169 16:9 HDTV
--    `-ar185 1.85:1 (~37:20)
--    `-ar239 2.39:1 (~43:18)
--    `-ar276 2.76:1 (69:25) (70mm)
--    `-ar137 1.37:1 (48:35) (Academy ratio)
--    `-ar259 2.59:1 (~70:27) (Cinerama)
--    `-ar235 2.35:1 (~47:20) (Cinemascope)
+-    `-ar43`  4:3 TV
+-    `-ar169` 16:9 HDTV
+-    `-ar185` 1.85:1 (~37:20)
+-    `-ar239` 2.39:1 (~43:18)
+-    `-ar276` 2.76:1 (69:25) (70mm)
+-    `-ar137` 1.37:1 (48:35) (Academy ratio)
+-    `-ar259` 2.59:1 (~70:27) (Cinerama)
+-    `-ar235` 2.35:1 (~47:20) (Cinemascope)
 
 ######   Audio  
 
