@@ -45,6 +45,19 @@
 #      -s576 [Resize to 576p]  
 #      -s480 [Resize to 480p]   
 #
+#######   Aspect Ratio Override 
+#      This script pulls the Aspect Ratio & Resulution (cropping is taken into account) from the source and then calculates SAR, 
+#      if it within 5% of 1:1 it goes with 1:1.  You can override the Aspect Ratio, if you are doing DVDs with this (WHY?) use the override
+#      
+#      -ar43  4:3 TV
+#      -ar169 16:9 HDTV
+#      -ar185 1.85:1 (~37:20)
+#      -ar239 2.39:1 (~43:18)
+#      -ar276 2.76:1 (69:25) (70mm)
+#      -ar137 1.37:1 (48:35) (Academy ratio)
+#      -ar259 2.59:1 (~70:27) (Cinerama)
+#      -ar235 2.35:1 (~47:20) (Cinemascope)
+#
 #######   Cropping  
 #
 #      -autocrop [Audio crop black bars]  
@@ -172,6 +185,22 @@ Param(
     [parameter(Mandatory = $false)]
     [Switch]$dTFF1x = $false,
     [parameter(Mandatory = $false)]
+    [Switch]$ar43 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$ar169 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$ar185 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$ar239 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$ar276 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$ar137 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$ar259 = $false,
+    [parameter(Mandatory = $false)]
+    [Switch]$ar235 = $false,
+    [parameter(Mandatory = $false)]
     [Switch]$autocrop = $false
 )
 Switch ($tune){
@@ -226,6 +255,16 @@ switch ($preset) {
     "placebo" {$preset = "--preset placebo "}
     Default {$preset = "--preset fast "}
 }
+$global:AROR = $false
+if ($ar43 -eq $true) { $global:AROR = '4:3'}
+if ($ar169 -eq $true) { $global:AROR = '16:9'}
+if ($ar185 -eq $true) { $global:AROR = '37:20'}
+if ($ar239 -eq $true) { $global:AROR = '43:18'}
+if ($ar276 -eq $true) { $global:AROR = '69:25'}
+if ($ar137 -eq $true) { $global:AROR = '48:35'}
+if ($ar259 -eq $true) { $global:AROR = '70:27'}
+if ($ar235 -eq $true) { $global:AROR = '47:20'}
+
 ###########################  SET THESE  #################################
 
 $RipBot264PATH = "c:\tools\RipBot264v1.26.0" #https://forum.doom9.org/showthread.php?t=127611
@@ -696,6 +735,66 @@ $text = @"
 "@
 ##########################################################################
 
+function Get-GCD ([int]$x, [int]$y)
+{
+  if ($x -eq $y) { return $y }
+  if ($x -gt $y) {
+    $a = $x
+    $b = $y
+  }
+  else {
+    $a = $y
+    $b = $x
+  }
+  while ($a % $b -ne 0) {
+    $tmp = $a % $b
+    $a = $b
+    $b = $tmp
+  }
+  return $b
+}
+function Get-Simplify-Fraction([string] $fraction)
+{
+    $split_fraction = ($fraction -split "/")
+    $gcd = (Get-GCD $split_fraction[0] $split_fraction[1])
+    # Iterate until GCD is 1
+    while($gcd -gt 1)
+    {
+        $fraction = "$($split_fraction[0]/$gcd)/$($split_fraction[1]/$gcd)"
+        $split_fraction = ($fraction -split "/")
+        $gcd = (Get-GCD $split_fraction[0] $split_fraction[1])
+    }
+
+    return $fraction
+}
+
+function Get-String-Fraction-decibel([string] $fraction)
+{
+    $split_fraction = ($fraction -split ":")
+    $value = ($split_fraction[0] -as [int]) / ($split_fraction[1] -as [int])
+    return $value
+}
+function Get-SAR($width,$height,$aspect) {
+    $ReducedRes = Get-Simplify-Fraction "$width/$height"
+    $ReducedWidth = $ReducedRes.Split('/')[0]
+    $ReducedHeight = $ReducedRes.Split('/')[1]
+    $RatioWidth = $aspect.Split('/')[0]
+    $RatioHeight = $aspect.Split('/')[1]
+    $TempTop = (($RatioWidth -as [int]) * ($ReducedHeight -as [int])).ToString()
+    $TempBottom = (($RatioHeight -as [int]) * ($ReducedWidth -as [int])).ToString()
+    $SAR = (Get-Simplify-Fraction "$TempTop/$TempBottom").Replace('/',':')
+    If ((Get-String-Fraction-decibel $SAR) -gt '.975' -and (Get-String-Fraction-decibel $SAR) -lt '1.025') {$SAR = '1:1'}
+    If ((Get-String-Fraction-decibel $SAR) -gt '1.319' -and (Get-String-Fraction-decibel $SAR) -lt '1.346') {$SAR = '4:3'}
+	If ((Get-String-Fraction-decibel $SAR) -gt '1.76' -and (Get-String-Fraction-decibel $SAR) -lt '1.795') {$SAR = '16:9'}
+    If ((Get-String-Fraction-decibel $SAR) -gt '1.832' -and (Get-String-Fraction-decibel $SAR) -lt '1.869') {$SAR = '37:20'}
+	If ((Get-String-Fraction-decibel $SAR) -gt '2.365' -and (Get-String-Fraction-decibel $SAR) -lt '2.413') {$SAR = '43:18'}
+    If ((Get-String-Fraction-decibel $SAR) -gt '2.732' -and (Get-String-Fraction-decibel $SAR) -lt '2.788') {$SAR = '69:25'}
+	If ((Get-String-Fraction-decibel $SAR) -gt '1.358' -and (Get-String-Fraction-decibel $SAR) -lt '1.385') {$SAR = '48:35'}
+    If ((Get-String-Fraction-decibel $SAR) -gt '2.567' -and (Get-String-Fraction-decibel $SAR) -lt '2.619') {$SAR = '70:27'}
+	If ((Get-String-Fraction-decibel $SAR) -gt '2.327' -and (Get-String-Fraction-decibel $SAR) -lt '2.364') {$SAR = '47:20'}
+    return $SAR
+}
+
 function Set-WindowState {
     <#
     .LINK
@@ -797,15 +896,74 @@ function _getinfo {
     Add-Content -Path ($temppath + "\getinfo.avs") -Value ('Trim(video,0,-1)') 
 }
 
-function _job88_EncodingClient($file) {
+function _job88_EncodingClient($file,$crop) {
     $video = (&$mediainfo --Output=JSON --full "$file") | ConvertFrom-Json
     [string]$thisfps = $video.media.track.FrameRate[0]
-    [String]$global:ratio = $video.media.track.DisplayAspectRatio_String
+    if ($AROR -eq $true) {
+        [String]$global:ratio = $AROR
+    } else {
+        [String]$global:ratio = ($video.media.track.DisplayAspectRatio_String -as [String]).Trim()
+    }
+    $Cropfile = $file.FullName.Replace($file.Extension , '.crop')
+
+    if ($crop -ne $false) {
+        $cropit = $crop.Split(",")
+        $count=0;foreach ($item in $cropit) {
+            If ($item -as [int] -lt '.01') {$cropit[$count] = -$cropit[$count]}
+            $count += 1
+        }
+        [string]$RemoveWidth = ($cropit[0] -as [int]) + ($cropit[2] -as [int])
+        [string]$RemoveHeight = ($cropit[1] -as [int]) + ($cropit[3] -as [int])
+
+        if ($AROR -eq $false) {
+            $tempratio = (Get-Simplify-Fraction (' ' + ((($video.media.track.Width -as [String]).Trim()) - ($RemoveWidth)) + '/' + ((($video.media.track.Height -as [String]).Trim()) - ($RemoveHeight))).trim()).Replace('/',':')
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.319' -and (Get-String-Fraction-decibel $tempratio) -lt '1.346') {[String]$global:ratio = '4:3'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.76' -and (Get-String-Fraction-decibel $tempratio) -lt '1.795') {[String]$global:ratio = '16:9'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.832' -and (Get-String-Fraction-decibel $tempratio) -lt '1.869') {[String]$global:ratio = '37:20'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.365' -and (Get-String-Fraction-decibel $tempratio) -lt '2.413') {[String]$global:ratio = '43:18'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.732' -and (Get-String-Fraction-decibel $tempratio) -lt '2.788') {[String]$global:ratio = '69:25'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.358' -and (Get-String-Fraction-decibel $tempratio) -lt '1.385') {[String]$global:ratio = '48:35'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.567' -and (Get-String-Fraction-decibel $tempratio) -lt '2.619') {[String]$global:ratio = '70:27'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.327' -and (Get-String-Fraction-decibel $tempratio) -lt '2.364') {[String]$global:ratio = '47:20'}
+        } else {
+            [String]$global:ratio = (Get-Simplify-Fraction (' ' + ((($video.media.track.Width -as [String]).Trim()) - ($RemoveWidth)) + '/' + ((($video.media.track.Height -as [String]).Trim()) - ($RemoveHeight))).trim()).Replace('/',':')
+        }
+
+    } elseif (Test-Path -Path $Cropfile -PathType Leaf) {
+        Read-Host -Prompt 'yep'
+        $cropit = Get-Content $Cropfile -First 1
+        $cropit = (([regex]::match($cropit, ([regex]"\((.*)\)")).Groups[1]).Value).Split(",")
+        $count=0;foreach ($item in $cropit) {
+            If ($item -as [int] -lt '.01') {$cropit[$count] = -$cropit[$count]}
+            $count += 1
+        }
+        [string]$RemoveWidth = ($cropit[0] -as [int]) + ($cropit[2] -as [int])
+        [string]$RemoveHeight = ($cropit[1] -as [int]) + ($cropit[3] -as [int])
+
+        if ($AROR -eq $false) {
+            $tempratio = (Get-Simplify-Fraction (' ' + ((($video.media.track.Width -as [String]).Trim()) - ($RemoveWidth)) + '/' + ((($video.media.track.Height -as [String]).Trim()) - ($RemoveHeight))).trim()).Replace('/',':')
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.319' -and (Get-String-Fraction-decibel $tempratio) -lt '1.346') {[String]$global:ratio = '4:3'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.76' -and (Get-String-Fraction-decibel $tempratio) -lt '1.795') {[String]$global:ratio = '16:9'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.832' -and (Get-String-Fraction-decibel $tempratio) -lt '1.869') {[String]$global:ratio = '37:20'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.365' -and (Get-String-Fraction-decibel $tempratio) -lt '2.413') {[String]$global:ratio = '43:18'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.732' -and (Get-String-Fraction-decibel $tempratio) -lt '2.788') {[String]$global:ratio = '69:25'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '1.358' -and (Get-String-Fraction-decibel $tempratio) -lt '1.385') {[String]$global:ratio = '48:35'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.567' -and (Get-String-Fraction-decibel $tempratio) -lt '2.619') {[String]$global:ratio = '70:27'}
+            If ((Get-String-Fraction-decibel $tempratio) -gt '2.327' -and (Get-String-Fraction-decibel $tempratio) -lt '2.364') {[String]$global:ratio = '47:20'}
+        } else {
+            [String]$global:ratio = (Get-Simplify-Fraction (' ' + ((($video.media.track.Width -as [String]).Trim()) - ($RemoveWidth)) + '/' + ((($video.media.track.Height -as [String]).Trim()) - ($RemoveHeight))).trim()).Replace('/',':')
+        }
+    } else {
+        [string]$RemoveWidth = 0
+        [string]$RemoveHeight = 0
+    }
+    $tempratio = $ratio.Replace(':','/')
+    $SAR = Get-SAR ((($video.media.track.Width -as [String]).Trim()) - ($RemoveWidth)) ((($video.media.track.Height -as [String]).Trim()) - ($RemoveHeight)) ($tempratio)
     [String]$global:defaultduration = $video.media.track.FrameRate[0]
     #Generate EncodingClient.meta
     Add-Content -Path ($temppath + "\job88_EncodingClient.meta") -Value ($temppath)
     Add-Content -Path ($temppath + "\job88_EncodingClient.meta") -Value ($RipBot264PATH)
-    Add-Content -Path ($temppath + "\job88_EncodingClient.meta") -Value ('"' + $RipBot264PATH + '\Tools\ffmpeg\bin\ffmpeg.exe" -loglevel panic -i "' + $temppath + '\job88.avs" -strict -1 -f yuv4mpegpipe - | "' + $RipBot264PATH + '\tools\x264\x264_x64.exe" --colorprim bt709 --transfer bt709 --colormatrix bt709  --crf ' + $crf + ' --fps ' + $thisfps + ' --force-cfr --min-keyint 24 --keyint 240 --frames ' + $fps + ' --sar 1:1 '+ $myprofile + $level + $tune + $preset + '--stdin y4m --output "' + $temppath + '\video.264" -')
+    Add-Content -Path ($temppath + "\job88_EncodingClient.meta") -Value ('"' + $RipBot264PATH + '\Tools\ffmpeg\bin\ffmpeg.exe" -loglevel panic -i "' + $temppath + '\job88.avs" -strict -1 -f yuv4mpegpipe - | "' + $RipBot264PATH + '\tools\x264\x264_x64.exe" --colorprim bt709 --transfer bt709 --colormatrix bt709  --crf ' + $crf + ' --fps ' + $thisfps + ' --force-cfr --min-keyint 24 --keyint 240 --frames ' + $fps + ' --sar ' + $SAR + ' '+ $myprofile + $level + $tune + $preset + '--stdin y4m --output "' + $temppath + '\video.264" -')
     Add-Content -Path ($temppath + "\job88_EncodingClient.meta") -Value ('') 
     Add-Content -Path ($temppath + "\job88_EncodingClient.meta") -Value ($File.FullName)
     Add-Content -Path ($temppath + "\job88_EncodingClient.meta") -Value ('h264') 
@@ -1359,6 +1517,10 @@ _DeMuxAll($file)
 Remove-Item -LiteralPath $temppath -Force -Recurse -ErrorAction SilentlyContinue
 New-Item -ItemType "directory" -Path $temppath -ErrorAction SilentlyContinue | Out-Null
 
+if ($autocrop -eq $true ) {
+    _DetectBorders $file
+}
+
 _CreateVideoIndexFile
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\CreateVideoIndexFile.avs"') -wait -NoNewWindow
 
@@ -1367,11 +1529,10 @@ _getinfo
 Start-Process -FilePath $ffprobe -ArgumentList ('-i "' + $temppath + '\getinfo.avs"') -wait -NoNewWindow
 
 $fps = Get-Content ($temppath + "\info.txt") -First 1
-_job88_EncodingClient $File
 
-if ($autocrop -eq $true ) {
-    _DetectBorders $file
-}
+_job88_EncodingClient $File $crop
+
+
 _job88
 
 
@@ -1394,7 +1555,7 @@ if ($skipnorm -eq $true) {
     $procs = $((Start-Process -FilePath $SubtitleEdit -ArgumentList ('/convert "' + ($path + '\' + $file.BaseName + '_demux\') + '*.sup" subrip /ocrengine:tesseract /FixCommonErrors /RemoveTextForHI /RedoCasing /FixCommonErrors /FixCommonErrors /outputfolder:"' + $remuxpath) -WorkingDirectory $remuxpath  -PassThru -NoNewWindow); (Start-Process -FilePath $EncodingClient -ArgumentList ('"' + $temppath + '\job88_EncodingClient.meta"')  -PassThru ))
     
 } else {
-	$audiofile = Get-Childitem -LiteralPath $demuxpath -Include ('*.dts', '*.ac3')
+	$audiofile = Get-Childitem -LiteralPath $demuxpath -Include ('*.dts', '*.ac3', '*.aac')
     _WrapAudio $audiofile[0]
     Export-Function -Function _Normalize -OutPath ".\"
     $procs = $((Start-Process "pwsh" -ArgumentList ('-File .\_Normalize.ps1 "' + $mkvfile + '" "' + $bitrate + '" "' + $freq + '" "' + $codec + '" "' + $audioext + '" "' + $ffmpeg + '"' )   -PassThru -NoNewWindow) ; (Start-Process -FilePath $SubtitleEdit -ArgumentList ('/convert "' + ($path + '\' + $file.BaseName + '_demux\') + '*.sup" subrip /ocrengine:tesseract /FixCommonErrors /RemoveTextForHI /RedoCasing /FixCommonErrors /FixCommonErrors /outputfolder:"' + $remuxpath) -WorkingDirectory $remuxpath  -PassThru -NoNewWindow); (Start-Process -FilePath $EncodingClient -ArgumentList ('"' + $temppath + '\job88_EncodingClient.meta"')  -PassThru ))
@@ -1409,7 +1570,10 @@ Start-Sleep -Seconds 6
 stop-process -name EncodingServer -Force
 
 if ($onlynorm -eq $false) {
-    $AudioList = Get-ChildItem -LiteralPath $demuxpath -Include ("*.aac", "*.ac3", "*.dts", "*.eac3", "*.flac,", "*.mp1", "*.mp2", "*.mp3", "*.ogg") -ErrorAction SilentlyContinue -Force | Sort-Object
+    $AudioList = Get-ChildItem -LiteralPath $demuxpath -Include ("*.srt", "*.aac", "*.ac3", "*.dts", "*.eac3", "*.flac,", "*.mp1", "*.mp2", "*.mp3", "*.ogg") -ErrorAction SilentlyContinue -Force | Sort-Object
+    $AudioList | Select-Object -First $Maxaudio | ForEach-Object { Move-Item -LiteralPath $_ -Destination $remuxpath }
+} else {
+    $AudioList = Get-ChildItem -LiteralPath $demuxpath -Include ("*.srt") -ErrorAction SilentlyContinue -Force | Sort-Object
     $AudioList | Select-Object -First $Maxaudio | ForEach-Object { Move-Item -LiteralPath $_ -Destination $remuxpath }
 }
 [pInvoke]::RefreshTrayArea()
