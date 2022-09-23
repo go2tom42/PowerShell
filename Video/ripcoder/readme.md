@@ -49,7 +49,7 @@ It is tailored to completely max out a CPU (I using a AMD 5950x), just using x26
 ######   Cropping  
 
 -    `-autocrop` [Audio crop black bars]  
--    `-crop` 'left,top,right,bottom' [Number of pixels to remove from listed direction, must be power of 2 (0 2 4 6 8 10 etc) (EX -crop '265,2,265,0'  )]  
+-    `-crop` 'left,top,right,bottom' [Number of pixels to remove from listed direction,L+R or T+B must be power of 2 (0 2 4 6 8 10 etc) (EX -crop '265,2,265,0'  )]  
 
 ######   Aspect Ratio Override 
 
