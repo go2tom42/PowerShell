@@ -74,7 +74,7 @@ This script pulls the Aspect Ratio & Resulution (cropping is taken into account)
 
 -    `-LPC` [TV -> PC]  
 -    `-LTV` [PC -> TV]  
--    `-colors 'hue,sat,bright,cont'` [Hue -180 to 180 Whole Numbers, sat 0 to 2 by tenths,bright -255 to 255 Whole Numbers,cont  0 to 2 by tenths (EX -crop '265,2,265,0' )]  
+-    `-colors 'hue,sat,bright,cont'` [Hue -180 to 180 Whole Numbers, sat 0 to 2 by tenths,bright -255 to 255 Whole Numbers,cont  0 to 2 by tenths (EX -colors '180,1,255,0' )]  
 
 ######   Video Enhancements  
 
