@@ -57,17 +57,24 @@ function Get-DefaultAudio($file) {
 
     $file = Get-Childitem -LiteralPath $file -ErrorAction Stop
     $file = Get-Childitem -LiteralPath $file.fullname -ErrorAction Stop
-    $video = &mkvmerge -J $file | ConvertFrom-Json
-    $audio_ck = $video.tracks | Where-Object { $_.type -eq "audio" }
-    $audio_ck2 = $audio_ck.properties | Where-Object { $_.default_track -eq "True" }
-
-    if ($audio_ck2) {
-        $default_track = $audio_ck2[0].number - 1
-        $def_language = $audio_ck2[0].language
-    } else {
-        $default_track = $audio_ck[0].properties.number - 1
-        $def_language = $audio_ck[0].properties.language
+    $video = &mkvmerge -J $file | ConvertFrom-Json    
+    $audio_newCK = $video.tracks.properties |  Where-Object { ($_.language -eq $language) -and $_.audio_channels }
+    if ($audio_newCK.count -lt 1) {
+        $audio_newCK = $video.tracks.properties |  Where-Object { $_.audio_channels }
     }
+
+    $defaultCK = $audio_newCK | Where-Object { ($_.default_track -eq "True") -and $_.language -eq $language } | Select-Object -First 1
+
+    if ($defaultCK.count -lt 1) {
+        $default_track = $audio_newCK[0].number - 1
+        $def_language = $audio_newCK[0].language
+    }
+    else {
+        $default_track = $defaultCK[0].number - 1
+        $def_language = $defaultCK[0].language
+    }
+
+
     
     $AudioMid = Join-Path ([IO.Path]::GetTempPath()) ($file.BaseName + '.AUDIO.mkv')
 
