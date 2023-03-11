@@ -1,7 +1,7 @@
 Param(
     [parameter(Mandatory = $true)]
     [alias("f")]
-    $File,
+    $file,
     [parameter(Mandatory = $false)]
     [Alias('c')]
     [String]$codec = "ac3",
@@ -13,8 +13,12 @@ Param(
     [String]$bitrate = "384k",
     [parameter(Mandatory = $false)]
     [Alias('ar')]
-    [String]$freq = "48000"
-    
+    [String]$freq = "48000",
+    [parameter(Mandatory = $false)]
+    [Alias('s')]
+    [String]$sub2srt = $false,
+    [parameter(Mandatory = $false)]
+    [String]$language = 'eng'     
 )
 
 [string]$mkvSTDOUT_FILE = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName().Split('.')[0] + ".txt")
